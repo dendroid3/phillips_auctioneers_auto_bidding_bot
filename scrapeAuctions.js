@@ -44,6 +44,8 @@ const sendToAPI = async (auctionData) => {
 const scrape = async () => {
     console.log("Starting scrape...");
     const browser = await puppeteer.launch({
+        executablePath: '/snap/bin/chromium', 
+        args: ['--no-sandbox', '--disable-setuid-sandbox'], 
         headless: "new" // Use the new headless mode
     });
     const page = await browser.newPage();
