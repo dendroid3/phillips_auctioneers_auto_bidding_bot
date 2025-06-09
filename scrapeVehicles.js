@@ -50,15 +50,21 @@ const sendToAPI = async (vehicleData) => {
 };
 
 const scrape = async () => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    executablePath: "/snap/bin/chromium",
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    headless: "new", // Use the new headless mode
+  });
   const page = await browser.newPage();
   const url = argv.url;
 
   console.log(`URL is: ${url}`);
 
   const auction_id = argv.auction_id;
-  console.log(`scrapping vehicles for vehicles for auction id: ${auction_id} on url: ${url}`);
-//   console.log(url);
+  console.log(
+    `scrapping vehicles for vehicles for auction id: ${auction_id} on url: ${url}`
+  );
+  //   console.log(url);
   await page.goto(url);
 
   const vehicleIds = await page.evaluate((auction_id) => {
