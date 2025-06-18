@@ -84,8 +84,10 @@ const placeBid = async (page, url, bidAmount) => {
 
 const run = async () => {
   const browser = await puppeteer.launch({
-    headless: true,
+    executablePath: '/snap/bin/chromium', 
+    // headless: new,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    headless: true,
   });
   const page = await browser.newPage();
 
