@@ -46,7 +46,7 @@ const login = async (page, email, password) => {
 
   console.log("Submitting login form...");
   await page.click('[name="login"]');
-  await page.waitForNavigation({ waitUntil: "networkidle2", timeout: 100000 });
+  await page.waitForNavigation({ waitUntil: "networkidle2", timeout: 10000 });
 };
 
 const placeBid = async (page, url, bidAmount) => {
