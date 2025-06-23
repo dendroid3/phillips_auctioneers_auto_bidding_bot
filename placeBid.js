@@ -269,7 +269,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
 const run = async () => {
   const browser = await puppeteer.launch({
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    headless: false,
+    headless: true,
   });
   const page = await browser.newPage();
 

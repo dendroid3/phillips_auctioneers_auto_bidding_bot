@@ -42,7 +42,7 @@ class AuctionSniper {
 
   async init() {
     this.browser = await puppeteer.launch({
-      headless: false, // Set to true in production
+      headless: true, // Set to true in production
       args: ["--no-sandbox"],
     });
     this.mainPage = await this.browser.newPage();
