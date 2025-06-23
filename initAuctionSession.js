@@ -29,6 +29,7 @@ const sendResultToAPI = (payload) => {
   console.log("Started");
   // Initialize the browser
   const browser = await puppeteer.launch({
+    executablePath: "/snap/bin/chromium",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
     headless: true,
   });
