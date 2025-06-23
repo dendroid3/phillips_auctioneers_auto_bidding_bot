@@ -1,0 +1,172 @@
+------------------------------------------------------
+LOGS FOR VEHICLE 1 KCW-123T
+------------------------------------------------------
+
+------------------------------------------------------
+19:43:46: We've began bidding, first sprint:
+------------------------------------------------------
+19:43:47, INFO: Navigating to login page
+19:44:06, INFO: Entering credentials
+19:44:06, INFO: Submitting login form
+19:44:10, SUCCESS: Logged in successfully
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:44:10, INFO: Navigating to auction page
+19:44:11, INFO: Placing bid of 500000
+19:44:11, INFO: Waiting for bid confirmation popup
+19:44:11, SUCCESS: We are the highest bidder.
+19:44:11, SUCCESS: Status: highest
+19:44:11, SUCCESS: Sprint Complete.
+
+
+------------------------------------------------------
+19:44:56: We've been outbid, another sprint:
+------------------------------------------------------
+19:44:57, INFO: Navigating to login page
+19:45:33, INFO: Entering credentials
+19:45:34, INFO: Submitting login form
+19:45:40, SUCCESS: Logged in successfully
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:45:40, INFO: Navigating to auction page
+19:45:40, INFO: Placing bid of 500000
+19:45:40, INFO: Waiting for bid confirmation popup
+19:45:40, SUCCESS: We are the highest bidder.
+19:45:40, SUCCESS: Status: highest
+19:45:41, SUCCESS: Sprint Complete.
+
+
+------------------------------------------------------
+19:46:08: We've been outbid, another sprint:
+------------------------------------------------------
+19:46:09, INFO: Navigating to login page
+19:46:27, INFO: Entering credentials
+19:46:28, INFO: Submitting login form
+19:46:33, SUCCESS: Logged in successfully
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:46:33, INFO: Navigating to auction page
+19:46:34, INFO: Placing bid of 500000
+19:46:34, INFO: Waiting for bid confirmation popup
+19:46:34, ERROR: There is a higher current bid
+19:46:34, ERROR: Error: Outbidded
+19:46:34, INFO: New bid will be placed in ~1 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:46:35, INFO: We are chasing the highest
+19:46:36, INFO: Placing bid of 505650
+19:46:37, INFO: Waiting for bid confirmation popup
+19:46:37, ERROR: There is a higher current bid
+19:46:37, ERROR: Error: Outbidded
+19:46:37, INFO: New bid will be placed in ~1 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:46:38, INFO: We are chasing the highest
+19:46:39, INFO: Placing bid of 511300
+19:46:39, INFO: Waiting for bid confirmation popup
+19:46:39, ERROR: There is a higher current bid
+19:46:39, ERROR: Error: Outbidded
+19:46:39, INFO: New bid will be placed in ~1 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:46:40, INFO: We are chasing the highest
+19:46:41, INFO: Placing bid of 516950
+19:46:41, INFO: Waiting for bid confirmation popup
+19:46:41, ERROR: There is a higher current bid
+19:46:41, ERROR: Error: Outbidded
+19:46:41, INFO: New bid will be placed in ~1 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:46:43, INFO: We are chasing the highest
+19:46:43, INFO: Placing bid of 522600
+19:46:43, INFO: Waiting for bid confirmation popup
+19:46:43, ERROR: There is a higher current bid
+19:46:43, ERROR: Error: Outbidded
+19:46:43, INFO: New bid will be placed in ~1 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:46:44, INFO: We are chasing the highest
+19:46:45, INFO: Placing bid of 528250
+19:46:45, INFO: Waiting for bid confirmation popup
+19:46:45, ERROR: There is a higher current bid
+19:46:45, ERROR: Error: Outbidded
+19:46:45, INFO: New bid will be placed in ~2 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:46:47, INFO: We are chasing the highest
+19:46:47, INFO: Placing bid of 533900
+19:46:47, INFO: Waiting for bid confirmation popup
+19:46:47, ERROR: There is a higher current bid
+19:46:47, ERROR: Error: Outbidded
+19:46:47, INFO: New bid will be placed in ~2 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:46:49, INFO: We are chasing the highest
+19:46:49, INFO: Placing bid of 539550
+19:46:50, INFO: Waiting for bid confirmation popup
+19:46:50, ERROR: There is a higher current bid
+19:46:50, ERROR: Error: Outbidded
+19:46:50, INFO: New bid will be placed in ~1 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:46:51, INFO: We are chasing the highest
+19:46:51, INFO: Placing bid of 545200
+19:46:51, INFO: Waiting for bid confirmation popup
+19:46:52, ERROR: There is a higher current bid
+19:46:52, ERROR: Error: Outbidded
+19:46:52, INFO: New bid will be placed in ~1 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:46:53, INFO: We are chasing the highest
+19:46:53, INFO: Placing bid of 550850
+19:46:54, INFO: Waiting for bid confirmation popup
+19:46:54, SUCCESS: We are the highest bidder.
+19:46:54, SUCCESS: Status: highest
+19:46:54, SUCCESS: Sprint Complete.
+
+
+------------------------------------------------------
+19:47:05: We've been outbid, another sprint:
+------------------------------------------------------
+19:47:06, INFO: Navigating to login page
+19:47:23, INFO: Entering credentials
+19:47:23, INFO: Submitting login form
+19:47:30, SUCCESS: Logged in successfully
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:47:30, INFO: Navigating to auction page
+19:47:31, INFO: Placing bid of 500000
+19:47:31, INFO: Waiting for bid confirmation popup
+19:47:31, ERROR: There is a higher current bid
+19:47:31, ERROR: Error: Outbidded
+19:47:31, INFO: New bid will be placed in ~2 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:47:33, INFO: We are chasing the highest
+19:47:34, INFO: Placing bid of 505650
+19:47:34, INFO: Waiting for bid confirmation popup
+19:47:34, SUCCESS: We are the highest bidder.
+19:47:34, SUCCESS: Status: highest
+19:47:34, SUCCESS: Sprint Complete
+
+
+------------------------------------------------------
+19:54:11: We've been outbid, another sprint:
+Stage: Lazy
+Increment: 5650
+------------------------------------------------------
+19:54:12, INFO: Navigating to login page

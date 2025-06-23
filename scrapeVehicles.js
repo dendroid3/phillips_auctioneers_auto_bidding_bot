@@ -29,7 +29,7 @@ const sendToAPI = async (vehicleData) => {
     });
 
     const response = await axios.post(
-      "http://localhost:8000/api/vehicle/create",
+      "http://127.0.0.1:80/api/vehicle/create",
       vehicleData,
       { httpsAgent: agent }
     );
@@ -51,7 +51,8 @@ const sendToAPI = async (vehicleData) => {
 
 const scrape = async () => {
   const browser = await puppeteer.launch({
-    executablePath: "/snap/bin/chromium",
+    // executablePath: "/snap/bin/chromium",
+    executablePath: '/usr/bin/google-chrome',
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
     headless: "new", // Use the new headless mode
   });

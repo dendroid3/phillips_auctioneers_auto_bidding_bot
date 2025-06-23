@@ -1,0 +1,220 @@
+------------------------------------------------------
+LOGS FOR VEHICLE 5 KCP-123T
+------------------------------------------------------
+
+------------------------------------------------------
+19:57:11: We've began bidding, first sprint:
+Stage: Lazy
+Increment: 3450
+------------------------------------------------------
+19:57:12, INFO: Navigating to login page
+19:57:33, INFO: Entering credentials
+19:57:33, INFO: Submitting login form
+19:57:37, SUCCESS: Logged in successfully
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:57:37, INFO: Navigating to auction page
+19:57:37, INFO: Placing bid of 500000
+19:57:37, INFO: Waiting for bid confirmation popup
+19:57:37, ERROR: There is a higher current bid
+19:57:38, ERROR: Outbidded
+19:57:38, INFO: New bid will be placed in ~16 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:57:53, INFO: We are chasing the highest
+19:57:54, INFO: Placing bid of 503450
+19:57:54, INFO: Waiting for bid confirmation popup
+19:57:54, ERROR: There is a higher current bid
+19:57:54, ERROR: Outbidded
+19:57:54, INFO: New bid will be placed in ~17 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:58:11, INFO: We are chasing the highest
+19:58:11, INFO: Placing bid of 506900
+19:58:11, INFO: Waiting for bid confirmation popup
+19:58:11, ERROR: There is a higher current bid
+19:58:11, ERROR: Outbidded
+19:58:11, INFO: New bid will be placed in ~11 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:58:22, INFO: We are chasing the highest
+19:58:23, INFO: Placing bid of 510350
+19:58:23, INFO: Waiting for bid confirmation popup
+19:58:23, ERROR: There is a higher current bid
+19:58:23, ERROR: Outbidded
+19:58:23, INFO: New bid will be placed in ~11 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:58:34, INFO: We are chasing the highest
+19:58:35, INFO: Placing bid of 513800
+19:58:35, INFO: Waiting for bid confirmation popup
+19:58:35, ERROR: There is a higher current bid
+19:58:35, ERROR: Outbidded
+19:58:35, INFO: New bid will be placed in ~16 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:58:51, INFO: We are chasing the highest
+19:58:51, INFO: Placing bid of 517250
+19:58:52, INFO: Waiting for bid confirmation popup
+19:58:52, ERROR: There is a higher current bid
+19:58:52, ERROR: Outbidded
+19:58:52, INFO: New bid will be placed in ~10 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:59:02, INFO: We are chasing the highest
+19:59:02, INFO: Placing bid of 520700
+19:59:03, INFO: Waiting for bid confirmation popup
+19:59:03, ERROR: There is a higher current bid
+19:59:03, ERROR: Outbidded
+19:59:03, INFO: New bid will be placed in ~14 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:59:17, INFO: We are chasing the highest
+19:59:17, INFO: Placing bid of 524150
+19:59:18, INFO: Waiting for bid confirmation popup
+19:59:18, ERROR: There is a higher current bid
+19:59:18, ERROR: Outbidded
+19:59:18, INFO: New bid will be placed in ~16 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:59:34, INFO: We are chasing the highest
+19:59:34, INFO: Placing bid of 527600
+19:59:34, INFO: Waiting for bid confirmation popup
+19:59:34, ERROR: There is a higher current bid
+19:59:34, ERROR: Outbidded
+19:59:34, INFO: New bid will be placed in ~17 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:59:51, INFO: We are chasing the highest
+19:59:51, INFO: Placing bid of 531050
+19:59:51, INFO: Waiting for bid confirmation popup
+19:59:52, ERROR: There is a higher current bid
+19:59:52, ERROR: Outbidded
+19:59:52, INFO: New bid will be placed in ~13 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+20:00:04, INFO: We are chasing the highest
+20:00:05, INFO: Placing bid of 534500
+20:00:05, INFO: Waiting for bid confirmation popup
+20:00:05, ERROR: There is a higher current bid
+20:00:05, ERROR: Outbidded
+20:00:05, INFO: New bid will be placed in ~19 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+20:00:24, INFO: We are chasing the highest
+20:00:24, INFO: Placing bid of 537950
+20:00:24, INFO: Waiting for bid confirmation popup
+20:00:24, ERROR: There is a higher current bid
+20:00:24, ERROR: Outbidded
+20:00:24, INFO: New bid will be placed in ~13 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+20:00:37, INFO: We are chasing the highest
+20:00:38, INFO: Placing bid of 541400
+20:00:38, INFO: Waiting for bid confirmation popup
+20:00:38, ERROR: There is a higher current bid
+20:00:38, ERROR: Outbidded
+20:00:38, INFO: New bid will be placed in ~19 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+20:00:57, INFO: We are chasing the highest
+20:00:57, INFO: Placing bid of 544850
+20:00:58, INFO: Waiting for bid confirmation popup
+20:00:58, ERROR: There is a higher current bid
+20:00:58, ERROR: Outbidded
+20:00:58, INFO: New bid will be placed in ~15 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+20:01:13, INFO: We are chasing the highest
+20:01:13, INFO: Placing bid of 548300
+20:01:14, INFO: Waiting for bid confirmation popup
+20:01:14, ERROR: There is a higher current bid
+20:01:14, ERROR: Outbidded
+20:01:14, INFO: New bid will be placed in ~17 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+20:01:31, INFO: We are chasing the highest
+20:01:31, INFO: Placing bid of 551750
+20:01:31, INFO: Waiting for bid confirmation popup
+20:01:31, SUCCESS: We are the highest bidder.
+20:01:32, SUCCESS: Status: highest
+20:01:32, SUCCESS: Sprint Complete
+
+
+------------------------------------------------------
+20:02:49: We've been outbid, another sprint:
+Stage: Aggressive
+Increment: 7950
+------------------------------------------------------
+20:02:50, INFO: Navigating to login page
+20:03:02, INFO: Entering credentials
+20:03:03, INFO: Submitting login form
+20:03:10, SUCCESS: Logged in successfully
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+20:03:10, INFO: Navigating to auction page
+20:03:11, INFO: Placing bid of 500000
+20:03:11, INFO: Waiting for bid confirmation popup
+20:03:11, ERROR: There is a higher current bid
+20:03:11, ERROR: Outbidded
+20:03:11, INFO: New bid will be placed in ~18 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+20:03:29, INFO: We are chasing the highest
+20:03:30, INFO: Placing bid of 507950
+20:03:30, INFO: Waiting for bid confirmation popup
+20:03:30, ERROR: There is a higher current bid
+20:03:30, ERROR: Outbidded
+20:03:30, INFO: New bid will be placed in ~15 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+20:03:45, INFO: We are chasing the highest
+20:03:45, INFO: Placing bid of 515900
+20:03:46, INFO: Waiting for bid confirmation popup
+20:03:46, ERROR: There is a higher current bid
+20:03:46, ERROR: Outbidded
+20:03:46, INFO: New bid will be placed in ~14 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+20:04:00, INFO: We are chasing the highest
+20:04:00, INFO: Placing bid of 523850
+20:04:00, INFO: Waiting for bid confirmation popup
+20:04:00, ERROR: There is a higher current bid
+20:04:00, ERROR: Outbidded
+20:04:00, INFO: New bid will be placed in ~13 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+20:04:13, INFO: We are chasing the highest
+20:04:14, INFO: Placing bid of 531800
+20:04:14, INFO: Waiting for bid confirmation popup
+20:04:14, ERROR: There is a higher current bid
+20:04:14, ERROR: Outbidded
+20:04:14, INFO: New bid will be placed in ~14 seconds
+
+
+------------------------------------------------------
+20:04:25: We've been outbid, another sprint:
+Stage: Lazy
+Increment: 3450
+------------------------------------------------------

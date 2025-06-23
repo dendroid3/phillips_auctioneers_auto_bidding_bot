@@ -1,0 +1,65 @@
+------------------------------------------------------
+LOGS FOR VEHICLE 2 KCQ-123T
+------------------------------------------------------
+
+------------------------------------------------------
+19:48:26: We've began bidding, first sprint:
+------------------------------------------------------
+19:48:26, INFO: Navigating to login page
+19:48:47, INFO: Entering credentials
+19:48:47, INFO: Submitting login form
+19:48:56, SUCCESS: Logged in successfully
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:48:56, INFO: Navigating to auction page
+19:48:56, INFO: Placing bid of 500000
+19:48:56, INFO: Waiting for bid confirmation popup
+19:48:56, ERROR: There is a higher current bid
+19:48:57, ERROR: Error: Outbidded
+19:48:57, INFO: New bid will be placed in ~14 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:49:11, INFO: We are chasing the highest
+19:49:11, INFO: Placing bid of 503789
+19:49:11, INFO: Waiting for bid confirmation popup
+19:49:11, ERROR: There is a higher current bid
+19:49:12, ERROR: Error: Outbidded
+19:49:12, INFO: New bid will be placed in ~10 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:49:22, INFO: We are chasing the highest
+19:49:22, INFO: Placing bid of 507578
+19:49:22, INFO: Waiting for bid confirmation popup
+19:49:22, ERROR: There is a higher current bid
+19:49:23, ERROR: Error: Outbidded
+19:49:23, INFO: New bid will be placed in ~15 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:49:38, INFO: We are chasing the highest
+19:49:38, INFO: Placing bid of 511367
+19:49:38, INFO: Waiting for bid confirmation popup
+19:49:38, ERROR: There is a higher current bid
+19:49:38, ERROR: Error: Outbidded
+19:49:38, INFO: New bid will be placed in ~16 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:49:54, INFO: We are chasing the highest
+19:49:55, INFO: Placing bid of 515156
+19:49:55, INFO: Waiting for bid confirmation popup
+19:49:55, ERROR: There is a higher current bid
+19:49:55, ERROR: Error: Outbidded
+19:49:55, INFO: New bid will be placed in ~18 seconds
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+19:50:13, INFO: We are chasing the highest
+19:50:14, INFO: Placing bid of 518945
+19:50:14, INFO: Waiting for bid confirmation popup
+19:50:14, SUCCESS: We are the highest bidder.
+19:50:14, SUCCESS: Status: highest
+19:50:14, SUCCESS: Sprint Complete

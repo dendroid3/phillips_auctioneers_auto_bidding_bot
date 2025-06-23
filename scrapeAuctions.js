@@ -25,7 +25,7 @@ const sendToAPI = async (auctionData) => {
         });
 
         const response = await axios.post(
-            'http://localhost:8000/api/auction/create', // Changed to http to avoid SSL issues
+            'http://127.0.0.1:80/api/auction/create', // Changed to http to avoid SSL issues
             auctionData,
             { httpsAgent: agent }
         );
@@ -44,7 +44,8 @@ const sendToAPI = async (auctionData) => {
 const scrape = async () => {
     console.log("Starting scrape...");
     const browser = await puppeteer.launch({
-        executablePath: '/snap/bin/chromium', 
+        // executablePath: '/snap/bin/chromium', 
+        executablePath: '/usr/bin/google-chrome',
         args: ['--no-sandbox', '--disable-setuid-sandbox'], 
         headless: "new" // Use the new headless mode
     });
