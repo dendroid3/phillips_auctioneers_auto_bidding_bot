@@ -45,7 +45,7 @@ const scrape = async () => {
     console.log("Starting scrape...");
     const browser = await puppeteer.launch({
         // executablePath: '/snap/bin/chromium', 
-        executablePath: '/usr/bin/google-chrome',
+        // executablePath: '/usr/bin/google-chrome',
         args: ['--no-sandbox', '--disable-setuid-sandbox'], 
         headless: true // Use the new headless mode
     });
