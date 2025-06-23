@@ -51,8 +51,8 @@ const sendToAPI = async (vehicleData) => {
 
 const scrape = async () => {
   const browser = await puppeteer.launch({
-    // executablePath: "/snap/bin/chromium",
-    executablePath: '/usr/bin/google-chrome',
+    executablePath: "/snap/bin/chromium",
+    // executablePath: '/usr/bin/google-chrome',
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
     headless: true, // Use the new headless mode
   });
