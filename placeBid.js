@@ -27,7 +27,7 @@ const createLogger = () => {
   );
   const pdfLogPath = path.join(
     logDir,
-    `${argv.vehicle_id}-${argv.vehicle_name}-${argv.email}.pdf`
+    `${argv.vehicle_id}-${argv.vehicle_name}.pdf`
   );
   const formatTime = () => {
     const now = new Date();
