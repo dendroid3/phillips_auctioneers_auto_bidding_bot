@@ -23,7 +23,7 @@ const createLogger = () => {
   const logDir = "logs";
   const textLogPath = path.join(
     logDir,
-    `${argv.vehicle_id}-${argv.vehicle_name}-${argv.email}.txt`
+    `${argv.vehicle_id}-${argv.vehicle_name}.txt`
   );
   const pdfLogPath = path.join(
     logDir,
@@ -65,6 +65,9 @@ const createLogger = () => {
       "Stage: " +
       argv.bid_stage +
       "\n" +
+      "Account: " +
+      argv.email +
+      "\n" +
       "Increment: " +
       argv.increment +
       "\n" +
@@ -83,6 +86,9 @@ const createLogger = () => {
       ": We've began bidding, first sprint:\n" +
       "Stage: " +
       argv.bid_stage +
+      "\n" +
+      "Account: " +
+      argv.email +
       "\n" +
       "Increment: " +
       argv.increment +
@@ -229,9 +235,9 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
         logger.error(`${response.data.status}`);
 
         await new Promise((resolve) => {
-          const waitTime = Math.floor(Math.random() * 1001) + 1000;
+          const waitTime = Math.floor(Math.random() * 1001) + 10000;
           logger.info(
-            `New bid will be placed in ~${Math.round(waitTime / 100)} seconds`
+            `New bid will be placed in ~${Math.round(waitTime / 1000)} seconds`
           );
           setTimeout(resolve, waitTime);
         });
@@ -244,21 +250,28 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
     const successElement = await page.$("div.woocommerce-message");
     if (successElement) {
       logger.success(`We are the highest bidder.`);
-      const response = await axios.post(
-        "http://127.0.0.1:80/api/bid/create",
-        {
-          amount: bidAmount,
-          vehicle_id: argv.vehicle_id,
-          phillips_account_email: argv.email,
-          status: "Highest",
-        }
-      );
+      const response = await axios.post("http://127.0.0.1:80/api/bid/create", {
+        amount: bidAmount,
+        vehicle_id: argv.vehicle_id,
+        phillips_account_email: argv.email,
+        status: "Highest",
+      });
       logger.success(`${response.data.status}`);
       return true;
     }
   } catch (err) {
     if (err.name === "TimeoutError") {
-      logger.error("ℹ️ No confirmation message detected within timeout period");
+      logger.error(
+        "ℹ️ No confirmation message detected within timeout period, trying to place bid again."
+      );
+      await new Promise((resolve) => {
+        const waitTime = Math.floor(Math.random() * 1001) + 1000;
+        logger.info(
+          `New bid will be placed in ~${Math.round(waitTime / 100)} seconds`
+        );
+        setTimeout(resolve, waitTime);
+      });
+      return placeBid(page, url, newBidAmount, true);
     } else if (!err.message.includes("waiting for selector")) {
       logger.error(`Error checking bid status: ${err.message}`);
     }
@@ -268,6 +281,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
 
 const run = async () => {
   const browser = await puppeteer.launch({
+    executablePath: "/snap/bin/chromium",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
     headless: true,
   });
