@@ -235,7 +235,7 @@ class AuctionSniper {
   await sniper.init();
 
   // 1. Login (only once)
-  await sniper.login("your@email.com", "yourpassword");
+  await sniper.login();
 
   // Get vehicle Urls from app
   const response = await axios.post("http://127.0.0.1:80/api/sniping/init", {

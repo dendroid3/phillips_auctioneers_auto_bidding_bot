@@ -223,7 +223,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
       if (bidAmount + argv.increment <= argv.maximum_amount) {
         const newBidAmount = bidAmount + argv.increment;
         const response = await axios.post(
-          "http://127.0.0.1:80/api/bid/create",
+          "http://127.0.0.1:8000/api/bid/create",
           {
             amount: bidAmount,
             vehicle_id: argv.vehicle_id,
@@ -235,7 +235,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
         logger.error(`${response.data.status}`);
 
         await new Promise((resolve) => {
-          const waitTime = Math.floor(Math.random() * 1001) + 10000;
+          const waitTime = Math.floor(Math.random() * 10001) + 10000;
           logger.info(
             `New bid will be placed in ~${Math.round(waitTime / 1000)} seconds`
           );
@@ -243,14 +243,17 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
         });
         return placeBid(page, url, newBidAmount, true);
       } else {
-        throw new Error(`Reached maximum bid amount of ${argv.maximum_amount}`);
+        logger.error(`Attempting final bid with the maximum amount of ${argv.maximum_amount}`);
+        placeBid(page, url, argv.maximum_amount);
+        return
+        // throw new Error(`Reached maximum bid amount of ${argv.maximum_amount}`);
       }
     }
 
     const successElement = await page.$("div.woocommerce-message");
     if (successElement) {
       logger.success(`We are the highest bidder.`);
-      const response = await axios.post("http://127.0.0.1:80/api/bid/create", {
+      const response = await axios.post("http://127.0.0.1:8000/api/bid/create", {
         amount: bidAmount,
         vehicle_id: argv.vehicle_id,
         phillips_account_email: argv.email,
@@ -271,7 +274,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
         );
         setTimeout(resolve, waitTime);
       });
-      return placeBid(page, url, newBidAmount, true);
+      return placeBid(page, url, bidAmount, true);
     } else if (!err.message.includes("waiting for selector")) {
       logger.error(`Error checking bid status: ${err.message}`);
     }
@@ -307,7 +310,6 @@ const run = async () => {
     const result = await placeBid(page, argv.url, argv.amount);
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    await page.screenshot({ path: `bid-${timestamp}.png` });
 
     return { success: true, message: result };
   } catch (error) {

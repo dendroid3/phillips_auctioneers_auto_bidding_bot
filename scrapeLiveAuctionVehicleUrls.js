@@ -3,7 +3,11 @@ import axios from "axios";
 import https from "https";
 
 (async () => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    executablePath: "/snap/bin/chromium",
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    headless: true,
+  });
   const page = await browser.newPage();
 
   try {
