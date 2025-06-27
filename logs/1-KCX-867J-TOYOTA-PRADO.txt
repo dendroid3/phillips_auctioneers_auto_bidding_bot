@@ -1,0 +1,51 @@
+------------------------------------------------------
+LOGS FOR VEHICLE 1 KCX-867J-TOYOTA-PRADO
+------------------------------------------------------
+
+------------------------------------------------------
+17:58:05: We've began bidding, first sprint:
+Stage: lazy
+Account: ernestotieno95@gmail.com
+Increment: 100
+------------------------------------------------------
+17:58:05, ERROR: Fatal error: Error: Browser was not found at the configured executablePath (/snap/bin/chromium)
+
+
+------------------------------------------------------
+17:58:52: We've been outbid, another sprint:
+Stage: lazy
+Account: ernestotieno95@gmail.com
+Increment: 100
+------------------------------------------------------
+17:59:35, INFO: Navigating to login page
+18:00:38, ERROR: Navigation timeout of 60000 ms exceeded
+18:01:12, SUCCESS: Sprint Complete
+18:01:42, ERROR: Fatal error: ProtocolError: Protocol error (Page.captureScreenshot): Not attached to an active page
+
+
+------------------------------------------------------
+18:58:10: We've been outbid, another sprint:
+Stage: lazy
+Account: ernestotieno95@gmail.com
+Increment: 100
+------------------------------------------------------
+18:58:12, INFO: Navigating to login page
+
+
+------------------------------------------------------
+18:58:40: We've been outbid, another sprint:
+Stage: lazy
+Account: ernestotieno95@gmail.com
+Increment: 100
+------------------------------------------------------
+19:00:18, ERROR: Protocol error (Emulation.setTouchEmulationEnabled): Session closed. Most likely the page has been closed.
+19:00:19, SUCCESS: Sprint Complete
+19:00:20, ERROR: Fatal error: TargetCloseError: Protocol error (Page.captureScreenshot): Session closed. Most likely the page has been closed.
+
+
+------------------------------------------------------
+19:00:33: We've been outbid, another sprint:
+Stage: lazy
+Account: ernestotieno95@gmail.com
+Increment: 100
+------------------------------------------------------

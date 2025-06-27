@@ -4,7 +4,7 @@ import https from "https";
 
 (async () => {
   const browser = await puppeteer.launch({
-    executablePath: "/snap/bin/chromium",
+    // executablePath: "/snap/bin/chromium",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
     headless: true,
   });
@@ -12,7 +12,7 @@ import https from "https";
 
   try {
     // Step 1: Navigate to the page and scrape data
-    await page.goto('file:///home/wanjohi/Downloads/live_auction_page.html', { waitUntil: 'domcontentloaded' });
+    await page.goto('https://phillipsauctioneers.co.ke/live-auction/', { waitUntil: 'domcontentloaded' });
 
     const products = await page.evaluate(() => {
       const links = Array.from(document.querySelectorAll('a.woocommerce-LoopProduct-link.no-lightbox'));
