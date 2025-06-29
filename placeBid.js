@@ -289,7 +289,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
 
 const run = async () => {
   const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium-browser',
+    executablePath: '/usr/bin/google-chrome',
     // executablePath: "/usr/bin/google-chrome",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
     headless: true,
