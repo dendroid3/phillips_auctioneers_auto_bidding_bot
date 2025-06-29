@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import puppeteer from "puppeteer";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
@@ -5,6 +6,10 @@ import axios from "axios";
 import fs from "fs";
 import path from "path";
 import PDFDocument from "pdfkit";
+
+// Configure absolute paths
+const LOG_DIR = "/var/www/phillips/bot/logs";
+const CHROME_PATH = "/usr/bin/chromium-browser";
 
 const argv = yargs(hideBin(process.argv))
   .option("url", { alias: "u", type: "string", demandOption: true })
@@ -19,31 +24,22 @@ const argv = yargs(hideBin(process.argv))
   .help()
   .alias("help", "h").argv;
 
+// Ensure log directory exists
+if (!fs.existsSync(LOG_DIR)) {
+  fs.mkdirSync(LOG_DIR, { recursive: true, mode: 0o775 });
+}
+
 const createLogger = () => {
-  // const logDir = "logs";
-  const logDir = "/var/www/phillips/bot/logs";
-  if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir, { recursive: true });
-  }
-  const textLogPath = path.join(
-    logDir,
-    `${argv.vehicle_id}-${argv.vehicle_name}.txt`
-  );
-  const pdfLogPath = path.join(
-    logDir,
-    `${argv.vehicle_id}-${argv.vehicle_name}.pdf`
-  );
+  const textLogPath = path.join(LOG_DIR, `${argv.vehicle_id}-${argv.vehicle_name}.txt`);
+  const pdfLogPath = path.join(LOG_DIR, `${argv.vehicle_id}-${argv.vehicle_name}.pdf`);
+
   const formatTime = () => {
     const now = new Date();
     const pad = (num) => num.toString().padStart(2, "0");
-    return `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(
-      now.getSeconds()
-    )}`;
+    return `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
   };
 
-  if (!fs.existsSync(logDir)) fs.mkdirSync(logDir);
-
-  // ANSI color codes for console
+  // ANSI colors for console
   const colors = {
     red: "\x1b[31m",
     green: "\x1b[32m",
@@ -51,7 +47,7 @@ const createLogger = () => {
     reset: "\x1b[0m",
   };
 
-  // PDF color equivalents (RGB)
+  // PDF colors
   const pdfColors = {
     red: [255, 0, 0],
     green: [0, 128, 0],
@@ -59,47 +55,26 @@ const createLogger = () => {
     black: [0, 0, 0],
   };
 
-  if (!fs.existsSync(logDir)) fs.mkdirSync(logDir);
+  const initLogFile = () => {
+    if (!fs.existsSync(textLogPath)) {
+      const header = [
+        "------------------------------------------------------",
+        `LOGS FOR VEHICLE ${argv.vehicle_id} ${argv.vehicle_name}`,
+        "------------------------------------------------------",
+        "",
+        "------------------------------------------------------",
+        `${formatTime()}: Bidding started`,
+        `Stage: ${argv.bid_stage}`,
+        `Account: ${argv.email}`,
+        `Increment: ${argv.increment}`,
+        "------------------------------------------------------",
+        ""
+      ].join("\n");
+      fs.writeFileSync(textLogPath, header);
+    }
+  };
 
-  if (fs.existsSync(textLogPath)) {
-    const separator =
-      "\n\n------------------------------------------------------\n" +
-      formatTime() +
-      ": We've been outbid, another sprint:\n" +
-      "Stage: " +
-      argv.bid_stage +
-      "\n" +
-      "Account: " +
-      argv.email +
-      "\n" +
-      "Increment: " +
-      argv.increment +
-      "\n" +
-      "------------------------------------------------------\n";
-    fs.appendFileSync(textLogPath, separator);
-  } else {
-    const separator =
-      "------------------------------------------------------\n" +
-      "LOGS FOR VEHICLE " +
-      argv.vehicle_id +
-      " " +
-      argv.vehicle_name +
-      "\n------------------------------------------------------\n\n" +
-      "------------------------------------------------------\n" +
-      formatTime() +
-      ": We've began bidding, first sprint:\n" +
-      "Stage: " +
-      argv.bid_stage +
-      "\n" +
-      "Account: " +
-      argv.email +
-      "\n" +
-      "Increment: " +
-      argv.increment +
-      "\n" +
-      "------------------------------------------------------\n";
-    fs.appendFileSync(textLogPath, separator);
-  }
+  initLogFile();
 
   return {
     log: (message) => {
@@ -123,7 +98,7 @@ const createLogger = () => {
       fs.appendFileSync(textLogPath, `${logMessage}\n`);
     },
     divider: () => {
-      const divider = "\n\n-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n";
+      const divider = "\n-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n";
       console.log(divider);
       fs.appendFileSync(textLogPath, divider);
     },
@@ -131,7 +106,6 @@ const createLogger = () => {
       const doc = new PDFDocument();
       doc.pipe(fs.createWriteStream(pdfLogPath));
 
-      // Read text log and apply colors
       const logContent = fs.readFileSync(textLogPath, "utf8");
       const lines = logContent.split("\n");
 
@@ -158,7 +132,7 @@ const logger = createLogger();
 const login = async (page, email, password) => {
   logger.info("Navigating to login page");
   await page.goto("https://phillipsauctioneers.co.ke/my-account", {
-    waitUntil: "domcontentloaded", // Changed from networkidle2
+    waitUntil: "domcontentloaded",
     timeout: 60000,
   });
 
@@ -170,10 +144,7 @@ const login = async (page, email, password) => {
 
   logger.info("Submitting login form");
   await page.click('[name="login"]');
-  await page.waitForNavigation({
-    waitUntil: "domcontentloaded",
-    timeout: 10000,
-  });
+  await page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 10000 });
   logger.success("Logged in successfully");
 };
 
@@ -196,27 +167,16 @@ const prepBid = async (page, bidAmount) => {
 
 const placeBid = async (page, url, bidAmount, chasing = false) => {
   logger.divider();
-  if (!chasing) {
-    logger.info(`Navigating to auction page`);
-  } else {
-    logger.info(`We are chasing the highest`);
-  }
+  logger.info(chasing ? `We are chasing the highest` : `Navigating to auction page`);
 
-  await page.goto(url, {
-    waitUntil: "domcontentloaded", // Changed from networkidle2
-    timeout: 60000,
-  });
+  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
 
   logger.info(`Placing bid of ${bidAmount}`);
   await prepBid(page, bidAmount);
 
   try {
     await page.waitForFunction(
-      () => {
-        const errorMsg = document.querySelector("ul.woocommerce-error");
-        const successMsg = document.querySelector("div.woocommerce-message");
-        return errorMsg || successMsg;
-      },
+      () => document.querySelector("ul.woocommerce-error") || document.querySelector("div.woocommerce-message"),
       { timeout: 10000 }
     );
 
@@ -226,33 +186,22 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
 
       if (bidAmount + argv.increment <= argv.maximum_amount) {
         const newBidAmount = bidAmount + argv.increment;
-        const response = await axios.post(
-          "http://127.0.0.1:80/api/bid/create",
-          {
-            amount: bidAmount,
-            vehicle_id: argv.vehicle_id,
-            phillips_account_email: argv.email,
-            status: "Outbidded",
-          }
-        );
+        const response = await axios.post("http://127.0.0.1:80/api/bid/create", {
+          amount: bidAmount,
+          vehicle_id: argv.vehicle_id,
+          phillips_account_email: argv.email,
+          status: "Outbidded",
+        });
 
         logger.error(`${response.data.status}`);
 
-        await new Promise((resolve) => {
-          const waitTime = Math.floor(Math.random() * 10001) + 10000;
-          logger.info(
-            `New bid will be placed in ~${Math.round(waitTime / 1000)} seconds`
-          );
-          setTimeout(resolve, waitTime);
-        });
+        const waitTime = Math.floor(Math.random() * 10001) + 10000;
+        logger.info(`New bid will be placed in ~${Math.round(waitTime / 1000)} seconds`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
         return placeBid(page, url, newBidAmount, true);
       } else {
-        logger.error(
-          `Attempting final bid with the maximum amount of ${argv.maximum_amount}`
-        );
-        placeBid(page, url, argv.maximum_amount);
-        return;
-        // throw new Error(`Reached maximum bid amount of ${argv.maximum_amount}`);
+        logger.error(`Attempting final bid with maximum amount of ${argv.maximum_amount}`);
+        return placeBid(page, url, argv.maximum_amount, true);
       }
     }
 
@@ -270,19 +219,11 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
     }
   } catch (err) {
     if (err.name === "TimeoutError") {
-      logger.error(
-        "ℹ️ No confirmation message detected within timeout period, trying to place bid again."
-      );
-      await new Promise((resolve) => {
-        const waitTime = Math.floor(Math.random() * 1001) + 1000;
-        logger.info(
-          `New bid will be placed in ~${Math.round(waitTime / 100)} seconds`
-        );
-        setTimeout(resolve, waitTime);
-      });
+      logger.error("No confirmation message detected, retrying...");
+      const waitTime = Math.floor(Math.random() * 1001) + 1000;
+      logger.info(`Retrying in ~${Math.round(waitTime / 100)} seconds`);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
       return placeBid(page, url, bidAmount, true);
-    } else if (!err.message.includes("waiting for selector")) {
-      logger.error(`Error checking bid status: ${err.message}`);
     }
     throw err;
   }
@@ -290,21 +231,20 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
 
 const run = async () => {
   const browser = await puppeteer.launch({
-    executablePath: "/usr/bin/google-chrome",
-    // executablePath: "/usr/bin/google-chrome",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    executablePath: CHROME_PATH,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--single-process"
+    ],
     headless: true,
   });
-  const page = await browser.newPage();
 
-  // Set up request interception to block images
+  const page = await browser.newPage();
   await page.setRequestInterception(true);
-  page.on("request", (request) => {
-    if (request.resourceType() === "image") {
-      request.abort();
-    } else {
-      request.continue();
-    }
+  page.on("request", req => {
+    req.resourceType() === "image" ? req.abort() : req.continue();
   });
 
   try {
@@ -316,26 +256,22 @@ const run = async () => {
     await login(page, argv.email, argv.password);
     const result = await placeBid(page, argv.url, argv.amount);
 
-    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-
     return { success: true, message: result };
   } catch (error) {
     logger.error(`${error.message}`);
-    await page.screenshot({ path: "error.png" });
+    await page.screenshot({ path: path.join(LOG_DIR, "error.png") });
     return { success: false, error: error.message };
   } finally {
-    browser.close();
+    await browser.close();
     logger.success("Sprint Complete");
     const pdfPath = logger.generatePdf();
-    console.log(`PDF generated at: ${pdfPath}`);
+    logger.info(`PDF generated at: ${pdfPath}`);
   }
 };
 
 run()
-  .then((result) => {
-    if (!result.success) process.exit(1);
-  })
-  .catch((err) => {
+  .then(result => !result.success && process.exit(1))
+  .catch(err => {
     logger.error(`Fatal error: ${err}`);
     process.exit(1);
   });
