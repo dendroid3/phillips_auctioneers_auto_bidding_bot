@@ -148,7 +148,7 @@ const login = async (page, email, password) => {
 const bidTrial = async (page) => {
   try {
     console.log("BidTrial Called");
-    await page.goto("file:///home/wanjohi/Downloads/live_auction_page.html", {
+    await page.goto("http://phillips.adilirealestate.com/liveAuction.html", {
       waitUntil: "domcontentloaded",
       timeout: 900000,
     });
