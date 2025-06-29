@@ -154,7 +154,7 @@ const login = async (page, email, password) => {
   await page.click('[name="login"]');
   await page.waitForNavigation({
     waitUntil: "domcontentloaded",
-    timeout: 10000,
+    timeout: 60000,
   });
   logger.success("Logged in successfully");
 };
@@ -192,7 +192,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
       () =>
         document.querySelector("ul.woocommerce-error") ||
         document.querySelector("div.woocommerce-message"),
-      { timeout: 10000 }
+      { timeout: 60000 }
     );
 
     const errorElement = await page.$("ul.woocommerce-error");
