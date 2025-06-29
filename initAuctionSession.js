@@ -32,8 +32,8 @@ const sendResultToAPI = async (payload) => {
   console.log("Started");
   // Initialize the browser
   const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/google-chrome',
-    // executablePath: "/usr/bin/google-chrome",
+    // executablePath: '/usr/bin/chromium-browser',
+    executablePath: "/usr/bin/google-chrome",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
     headless: true,
   });
