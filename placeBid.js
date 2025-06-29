@@ -9,7 +9,7 @@ import PDFDocument from "pdfkit";
 
 // Configure absolute paths
 const LOG_DIR = "/var/www/phillips/bot/logs";
-const CHROME_PATH = "/usr/bin/chromium-browser";
+const CHROME_PATH = "/usr/bin/google-chrome";
 
 const argv = yargs(hideBin(process.argv))
   .option("url", { alias: "u", type: "string", demandOption: true })
