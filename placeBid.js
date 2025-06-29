@@ -218,10 +218,8 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
 
     const errorElement = await page.$("ul.woocommerce-error");
     if (errorElement) {
-      logger.error(`There is a higher current bid`);
+      logger.info(`There is a higher current bid`);
 
-      if (bidAmount + argv.increment <= argv.maximum_amount) {
-        const newBidAmount = bidAmount + argv.increment;
         const response = await axios.post(
           "http://127.0.0.1:80/api/bid/create",
           {
@@ -231,25 +229,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
             status: "Outbidded",
           }
         );
-
-        logger.error(`${response.data.status}`);
-
-        await new Promise((resolve) => {
-          const waitTime = Math.floor(Math.random() * 10001) + 10000;
-          logger.info(
-            `New bid will be placed in ~${Math.round(waitTime / 1000)} seconds`
-          );
-          setTimeout(resolve, waitTime);
-        });
-        return placeBid(page, url, newBidAmount, true);
-      } else {
-        logger.error(
-          `Attempting final bid with the maximum amount of ${argv.maximum_amount}`
-        );
-        placeBid(page, url, argv.maximum_amount);
-        return;
-        // throw new Error(`Reached maximum bid amount of ${argv.maximum_amount}`);
-      }
+        return true;
     }
 
     const successElement = await page.$("div.woocommerce-message");
@@ -269,7 +249,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
     }
   } catch (err) {
     if (err.name === "TimeoutError") {
-      logger.error(
+      logger.info(
         "ℹ️ No confirmation message detected within timeout period, trying to place bid again."
       );
       await new Promise((resolve) => {
@@ -281,7 +261,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
       });
       return placeBid(page, url, bidAmount, true);
     } else if (!err.message.includes("waiting for selector")) {
-      logger.error(`Error checking bid status: ${err.message}`);
+      logger.info(`Error checking bid status: ${err.message}`);
     }
     throw err;
   }
@@ -319,7 +299,7 @@ const run = async () => {
 
     return { success: true, message: result };
   } catch (error) {
-    logger.error(`${error.message}`);
+    logger.info(`${error.message}`);
     await page.screenshot({ path: "error.png" });
     return { success: false, error: error.message };
   } finally {
@@ -335,6 +315,6 @@ run()
     if (!result.success) process.exit(1);
   })
   .catch((err) => {
-    logger.error(`Fatal error: ${err}`);
+    logger.info(`Fatal error: ${err}`);
     process.exit(1);
   });
