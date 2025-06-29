@@ -200,7 +200,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
 
   await page.goto(url, {
     waitUntil: "domcontentloaded", // Changed from networkidle2
-    timeout: 30000,
+    timeout: 60000,
   });
 
   logger.info(`Placing bid of ${bidAmount}`);
@@ -223,7 +223,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
       if (bidAmount + argv.increment <= argv.maximum_amount) {
         const newBidAmount = bidAmount + argv.increment;
         const response = await axios.post(
-          "http://127.0.0.1:8000/api/bid/create",
+          "http://127.0.0.1:80/api/bid/create",
           {
             amount: bidAmount,
             vehicle_id: argv.vehicle_id,
@@ -243,9 +243,11 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
         });
         return placeBid(page, url, newBidAmount, true);
       } else {
-        logger.error(`Attempting final bid with the maximum amount of ${argv.maximum_amount}`);
+        logger.error(
+          `Attempting final bid with the maximum amount of ${argv.maximum_amount}`
+        );
         placeBid(page, url, argv.maximum_amount);
-        return
+        return;
         // throw new Error(`Reached maximum bid amount of ${argv.maximum_amount}`);
       }
     }
@@ -253,12 +255,15 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
     const successElement = await page.$("div.woocommerce-message");
     if (successElement) {
       logger.success(`We are the highest bidder.`);
-      const response = await axios.post("http://127.0.0.1:8000/api/bid/create", {
-        amount: bidAmount,
-        vehicle_id: argv.vehicle_id,
-        phillips_account_email: argv.email,
-        status: "Highest",
-      });
+      const response = await axios.post(
+        "http://127.0.0.1:80/api/bid/create",
+        {
+          amount: bidAmount,
+          vehicle_id: argv.vehicle_id,
+          phillips_account_email: argv.email,
+          status: "Highest",
+        }
+      );
       logger.success(`${response.data.status}`);
       return true;
     }
@@ -285,7 +290,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
 const run = async () => {
   const browser = await puppeteer.launch({
     executablePath: "/snap/bin/chromium",
-    // executablePath: "/usr/bin/google-chrome"
+    // executablePath: "/usr/bin/google-chrome",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
     headless: false,
   });

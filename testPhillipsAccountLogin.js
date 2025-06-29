@@ -207,6 +207,7 @@ const bidTrial = async (page) => {
 
 const run = async () => {
   const browser = await puppeteer.launch({
+    executablePath: "/snap/bin/chromium",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
     headless: true,
   });
@@ -236,8 +237,8 @@ const run = async () => {
     } else {
       return {
         success: false,
-        message: `Could not login with ${argv.email}`
-      }
+        message: `Could not login with ${argv.email}`,
+      };
       console.log("Login Failed");
       // return "Fail";
     }

@@ -38,11 +38,13 @@ class AuctionSniper {
     this.mainPage = null;
     this.tabs = [];
     this.loggedIn = false;
+    this.vehicleData = []; // Store vehicle data for increment calculations
   }
 
   async init() {
     this.browser = await puppeteer.launch({
-      headless: true, // Set to true in production
+      executablePath: "/snap/bin/chromium",
+      headless: false, // Set to true in production
       args: ["--no-sandbox"],
     });
     this.mainPage = await this.browser.newPage();
@@ -66,6 +68,7 @@ class AuctionSniper {
 
   async prepareTabs(vehicleData) {
     if (!this.loggedIn) throw new Error("Not logged in");
+    this.vehicleData = vehicleData; // Store for later reference
 
     console.log(`Preparing ${vehicleData.length} tabs...`);
     for (let i = 0; i < vehicleData.length; i++) {
@@ -77,13 +80,16 @@ class AuctionSniper {
 
       await tab.goto(vehicleData[i].url, { waitUntil: "networkidle2" });
 
+      const initialAmount =
+        vehicleData[i].current_bid + vehicleData[i].sniping_stage_increment;
+
       // Prepare bid amount but don't submit yet
       await tab.focus("#_actual_bid");
       await tab.keyboard.down("Control");
       await tab.keyboard.press("A");
       await tab.keyboard.up("Control");
       await tab.keyboard.press("Backspace");
-      await tab.type("#_actual_bid", vehicleData[i].maximum_amount.toString(), {
+      await tab.type("#_actual_bid", initialAmount.toString(), {
         delay: 100,
       });
       await tab.focus(".ywcact-auction-confirm");
@@ -93,18 +99,19 @@ class AuctionSniper {
         page: tab,
         url: vehicleData[i].url,
         id: vehicleData[i].id,
-        amount: vehicleData[i].maximum_amount,
+        amount: initialAmount,
+        maxAmount: vehicleData[i].maximum_amount,
+        increment: vehicleData[i].sniping_stage_increment,
+        retries: 0, // Track number of retry attempts
         ready: true,
       });
 
-      console.log(
-        `Tab ${i + 1} ready with amount ${vehicleData[i].maximum_amount}`
-      );
+      console.log(`Tab ${i + 1} ready with amount ${initialAmount}`);
     }
   }
 
   async triggerBids() {
-    // Fetch from DB those vehicles that have yet to be won // status !== 'highest'
+    // Fetch latest vehicle data from API
     const response = await axios.post(
       "http://127.0.0.1:80/api/sniping/init",
       {
@@ -113,67 +120,36 @@ class AuctionSniper {
       }
     );
 
-    const vehicleData = response.data;
-
-    console.log(response);
-
-    console.log(vehicleData.length);
+    const latestVehicleData = response.data;
+    console.log(`Fetched ${latestVehicleData.length} active vehicles`);
 
     const tabsToTrigger = this.tabs.filter((tab) =>
-      vehicleData.some((triggerItem) => triggerItem.id === tab.id)
+      latestVehicleData.some((vehicle) => vehicle.id === tab.id)
     );
 
     if (tabsToTrigger.length === 0) {
       console.log("No matching tabs found for the provided IDs");
       return;
     }
+
     for (const tab of tabsToTrigger) {
       if (!tab.ready) continue;
 
       try {
-        await tab.page.bringToFront(); // Brings tab to focus
-        await new Promise((r) => setTimeout(r, 0));
+        await tab.page.bringToFront();
+        await new Promise((r) => setTimeout(r, 100)); // Small delay for stability
 
-        // 2. DEBUG: Verify we're on the right tab
-        console.log(`Processing tab: ${await tab.page.title()}`);
+        console.log(
+          `Processing tab: (${await tab.id}) ${await tab.page.title()}`
+        );
 
-        // 3. CLICK LOGIC (now that tab is focused)
         const buttons = await tab.page.$$(".ywcact-modal-button-confirm-bid");
         if (buttons.length < 2) throw new Error("Second button missing!");
 
-        await buttons[1].click({ delay: 10 });
+        await buttons[1].click({ delay: 100 });
 
-        // 4. Wait for either success or error message
-        // try {
-        //   // Wait for potential error message
-        //   const errorElement = await tab.page.waitForSelector(
-        //     "ul.woocommerce-error",
-        //     {
-        //       timeout: 5000, // wait up to 5 seconds
-        //     }
-        //   );
-
-        //   if (errorElement) {
-        //     // Extract and log error message
-        //     const errorMessage = await tab.page.$eval(
-        //       "ul.woocommerce-error li",
-        //       (el) => el.textContent.trim()
-        //     );
-        //     console.log("Bid Error:", errorMessage);
-        //     throw new Error(errorMessage); // Optional: rethrow if you want to handle this as an error
-        //   }
-        // } catch (err) {
-        //   // If the error element doesn't appear within timeout, continue silently
-        //   // This means the bid was likely successful
-        //   if (!err.message.includes("waiting for selector")) {
-        //     // Only log if it's not a timeout error (which we expect for successful bids)
-        //     console.log("Error checking for bid confirmation:", err.message);
-        //   }
-        // }
-
-        // Wait for either error or success message
+        // Wait for success/error message
         try {
-          // Wait for either message to appear (with a reasonable timeout)
           await tab.page.waitForFunction(
             () => {
               const errorMsg = document.querySelector("ul.woocommerce-error");
@@ -183,43 +159,82 @@ class AuctionSniper {
               return errorMsg || successMsg;
             },
             { timeout: 10000 }
-          ); // 10 second timeout
+          );
 
-          // Check for error message first
+          // Check for error
           const errorElement = await tab.page.$("ul.woocommerce-error");
           if (errorElement) {
             const errorMessage = await tab.page.$eval(
               "ul.woocommerce-error li",
               (el) => el.textContent.trim()
             );
-            console.log("❌ Bid Error:", errorMessage);
             throw new Error(errorMessage);
           }
 
-          // If no error, check for success message
+          // Success case
           const successElement = await tab.page.$("div.woocommerce-message");
           if (successElement) {
             const successMessage = await tab.page.$eval(
               "div.woocommerce-message",
               (el) => el.textContent.trim()
             );
-            console.log("✅ Bid Success:", successMessage);
+            console.log(`✅ Bid successful: ${successMessage}`);
+            tab.ready = false;
           }
         } catch (err) {
           if (err.name === "TimeoutError") {
-            console.log(
-              "ℹ️ No confirmation message detected within timeout period"
-            );
-          } else if (!err.message.includes("waiting for selector")) {
-            console.log("Error checking bid status:", err.message);
+            console.log("ℹ️ No confirmation message detected");
+          } else {
+            throw err; // Re-throw other errors
           }
         }
-        // 4. CONFIRMATION
-        console.log(`✅ Bid submitted on ${tab.url}`);
-        tab.ready = false;
       } catch (error) {
-        console.error(`❌ Failed on ${tab.url}:`, error.message);
-        await tab.page.screenshot({ path: `error-${Date.now()}.png` });
+        console.error(`❌ Bid failed on ${tab.url}:`, error.message);
+
+        // Auto-retry with higher bid if error suggests it
+        if (
+          error.message.toLowerCase().includes("higher") ||
+          error.message.toLowerCase().includes("increase")
+        ) {
+          tab.retries += 1;
+          const newIncrement = tab.increment * (tab.retries + 1);
+          const newAmount = tab.amount + newIncrement;
+
+          console.log(
+            `Trial ${tab.retries} increment now is ${newIncrement}, thus the amount is ${newAmount}`
+          );
+          // Don't exceed maximum allowed bid
+          if (newAmount > tab.maxAmount) {
+            console.log(
+              `⚠️ Cannot increase bid further (max: ${tab.maxAmount}, attempted: ${newAmount})`
+            );
+            tab.ready = false;
+            continue;
+          }
+
+          console.log(
+            `🔄 Retry #${tab.retries}: Increasing bid from ${tab.amount} to ${newAmount}`
+          );
+
+          // Update bid amount
+          tab.amount = newAmount;
+
+          // Re-enter the bid
+          await tab.page.focus("#_actual_bid");
+          await tab.page.keyboard.down("Control");
+          await tab.page.keyboard.press("A");
+          await tab.page.keyboard.up("Control");
+          await tab.page.keyboard.press("Backspace");
+          await tab.page.type("#_actual_bid", tab.amount.toString(), {
+            delay: 100,
+          });
+
+          // Re-trigger the bid
+          await this.triggerBids(); // Recursively retry
+        } else {
+          console.log("⚠️ Non-bid-related error, skipping retry");
+          await tab.page.screenshot({ path: `error-${Date.now()}.png` });
+        }
       }
     }
   }
@@ -229,31 +244,22 @@ class AuctionSniper {
   }
 }
 
-// Usage Example
+// Main execution
 (async () => {
   const sniper = new AuctionSniper();
   await sniper.init();
-
-  // 1. Login (only once)
   await sniper.login();
 
-  // Get vehicle Urls from app
+  // Fetch initial vehicle data
   const response = await axios.post("http://127.0.0.1:80/api/sniping/init", {
     auction_session_id: argv.auction_session_id,
     phillips_account_id: argv.phillips_account_id,
   });
 
-  const vehicleData = response.data;
+  await sniper.prepareTabs(response.data);
+  console.log('Type "trigger" to submit bids or "close" to exit');
 
-  console.log(response);
-
-  console.log(vehicleData.length);
-
-  await sniper.prepareTabs(vehicleData);
-
-  console.log("All tabs ready. Waiting for trigger command...");
-
-  // 3. Set up trigger mechanism
+  // CLI control
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -261,12 +267,10 @@ class AuctionSniper {
 
   rl.on("line", (input) => {
     if (input === "trigger") {
-      sniper.triggerBids(); // Or specify indexes: [0, 1, 2]
+      sniper.triggerBids();
     } else if (input === "close") {
       sniper.close();
-      process.exit();
+      rl.close();
     }
   });
-
-  console.log('Type "trigger" to submit all bids, or "close" to exit');
 })();

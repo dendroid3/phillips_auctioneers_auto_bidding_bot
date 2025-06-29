@@ -22,16 +22,20 @@ console.log("OUT");
 
 const sendResultToAPIURL =
   "http://127.0.0.1:80/api/auction/init_test_results";
-const sendResultToAPI = (payload) => {
-  axios.post(sendResultToAPIURL, payload);
+const sendResultToAPI = async (payload) => {
+  payload.email = argv.email;
+  payload.password = argv.password;
+  await axios.post(sendResultToAPIURL, payload);
+  process.exit(0);
 };
 (async () => {
   console.log("Started");
   // Initialize the browser
   const browser = await puppeteer.launch({
     executablePath: "/snap/bin/chromium",
+    // executablePath: "/usr/bin/google-chrome",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    headless: true,
+    headless: false,
   });
   try {
     // Open page
@@ -196,7 +200,7 @@ const sendResultToAPI = (payload) => {
       if (successElement) {
         // Shows that bid was placed, high enough
         const response = await axios.post(
-          "http://127.0.0.1:80/api/bid/create",
+          "http://127.0.0.1/api/bid/create",
           {
             amount: 1000,
             vehicle_id: vehicle_id,
@@ -218,7 +222,7 @@ const sendResultToAPI = (payload) => {
       const payload4 = {
         email: argv.email,
         success: false,
-        message: `Account ${argv.email} failed the test. Try manually to see if it works, if it is authorized to bid, then retry initializing.`,
+        message: `Account P4 ${argv.email} failed the test. Try manually to see if it works, if it is authorized to bid, then retry initializing.`,
         status: 403,
       };
       sendResultToAPI(payload4);
@@ -229,8 +233,9 @@ const sendResultToAPI = (payload) => {
   } catch (error) {
     console.log(error);
     const payload5 = {
+      error: error,
       success: false,
-      message: `Account ${argv.email} failed the test. Try manually to see if it works, if it is authorized to bid, then retry initializing.`,
+      message: `Account P5 ${argv.email} failed the test. Try manually to see if it works, if it is authorized to bid, then retry initializing.`,
       status: 403,
     };
     sendResultToAPI(payload5);
