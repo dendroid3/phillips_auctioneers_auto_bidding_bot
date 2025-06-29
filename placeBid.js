@@ -30,13 +30,21 @@ if (!fs.existsSync(LOG_DIR)) {
 }
 
 const createLogger = () => {
-  const textLogPath = path.join(LOG_DIR, `${argv.vehicle_id}-${argv.vehicle_name}.txt`);
-  const pdfLogPath = path.join(LOG_DIR, `${argv.vehicle_id}-${argv.vehicle_name}.pdf`);
+  const textLogPath = path.join(
+    LOG_DIR,
+    `${argv.vehicle_id}-${argv.vehicle_name}.txt`
+  );
+  const pdfLogPath = path.join(
+    LOG_DIR,
+    `${argv.vehicle_id}-${argv.vehicle_name}.pdf`
+  );
 
   const formatTime = () => {
     const now = new Date();
     const pad = (num) => num.toString().padStart(2, "0");
-    return `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    return `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(
+      now.getSeconds()
+    )}`;
   };
 
   // ANSI colors for console
@@ -68,7 +76,7 @@ const createLogger = () => {
         `Account: ${argv.email}`,
         `Increment: ${argv.increment}`,
         "------------------------------------------------------",
-        ""
+        "",
       ].join("\n");
       fs.writeFileSync(textLogPath, header);
     }
@@ -144,7 +152,10 @@ const login = async (page, email, password) => {
 
   logger.info("Submitting login form");
   await page.click('[name="login"]');
-  await page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 10000 });
+  await page.waitForNavigation({
+    waitUntil: "domcontentloaded",
+    timeout: 10000,
+  });
   logger.success("Logged in successfully");
 };
 
@@ -167,7 +178,9 @@ const prepBid = async (page, bidAmount) => {
 
 const placeBid = async (page, url, bidAmount, chasing = false) => {
   logger.divider();
-  logger.info(chasing ? `We are chasing the highest` : `Navigating to auction page`);
+  logger.info(
+    chasing ? `We are chasing the highest` : `Navigating to auction page`
+  );
 
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
 
@@ -176,7 +189,9 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
 
   try {
     await page.waitForFunction(
-      () => document.querySelector("ul.woocommerce-error") || document.querySelector("div.woocommerce-message"),
+      () =>
+        document.querySelector("ul.woocommerce-error") ||
+        document.querySelector("div.woocommerce-message"),
       { timeout: 10000 }
     );
 
@@ -186,21 +201,28 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
 
       if (bidAmount + argv.increment <= argv.maximum_amount) {
         const newBidAmount = bidAmount + argv.increment;
-        const response = await axios.post("http://127.0.0.1:80/api/bid/create", {
-          amount: bidAmount,
-          vehicle_id: argv.vehicle_id,
-          phillips_account_email: argv.email,
-          status: "Outbidded",
-        });
+        const response = await axios.post(
+          "http://127.0.0.1:80/api/bid/create",
+          {
+            amount: bidAmount,
+            vehicle_id: argv.vehicle_id,
+            phillips_account_email: argv.email,
+            status: "Outbidded",
+          }
+        );
 
         logger.error(`${response.data.status}`);
 
         const waitTime = Math.floor(Math.random() * 10001) + 10000;
-        logger.info(`New bid will be placed in ~${Math.round(waitTime / 1000)} seconds`);
-        await new Promise(resolve => setTimeout(resolve, waitTime));
+        logger.info(
+          `New bid will be placed in ~${Math.round(waitTime / 1000)} seconds`
+        );
+        await new Promise((resolve) => setTimeout(resolve, waitTime));
         return placeBid(page, url, newBidAmount, true);
       } else {
-        logger.error(`Attempting final bid with maximum amount of ${argv.maximum_amount}`);
+        logger.error(
+          `Attempting final bid with maximum amount of ${argv.maximum_amount}`
+        );
         return placeBid(page, url, argv.maximum_amount, true);
       }
     }
@@ -222,7 +244,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
       logger.error("No confirmation message detected, retrying...");
       const waitTime = Math.floor(Math.random() * 1001) + 1000;
       logger.info(`Retrying in ~${Math.round(waitTime / 100)} seconds`);
-      await new Promise(resolve => setTimeout(resolve, waitTime));
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
       return placeBid(page, url, bidAmount, true);
     }
     throw err;
@@ -236,14 +258,17 @@ const run = async () => {
       "--no-sandbox",
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage",
-      "--single-process"
+      "--single-process",
+      "--disable-gpu",
+      `--user-data-dir=/var/www/.config/google-chrome`,
+      `--disk-cache-dir=/var/www/.cache/google-chrome`,
     ],
     headless: true,
   });
 
   const page = await browser.newPage();
   await page.setRequestInterception(true);
-  page.on("request", req => {
+  page.on("request", (req) => {
     req.resourceType() === "image" ? req.abort() : req.continue();
   });
 
@@ -270,8 +295,8 @@ const run = async () => {
 };
 
 run()
-  .then(result => !result.success && process.exit(1))
-  .catch(err => {
+  .then((result) => !result.success && process.exit(1))
+  .catch((err) => {
     logger.error(`Fatal error: ${err}`);
     process.exit(1);
   });
