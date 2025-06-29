@@ -20,7 +20,11 @@ const argv = yargs(hideBin(process.argv))
   .alias("help", "h").argv;
 
 const createLogger = () => {
-  const logDir = "logs";
+  // const logDir = "logs";
+  const logDir = "/var/www/phillips/bot/logs";
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true });
+  }
   const textLogPath = path.join(
     logDir,
     `${argv.vehicle_id}-${argv.vehicle_name}.txt`
@@ -255,15 +259,12 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
     const successElement = await page.$("div.woocommerce-message");
     if (successElement) {
       logger.success(`We are the highest bidder.`);
-      const response = await axios.post(
-        "http://127.0.0.1:80/api/bid/create",
-        {
-          amount: bidAmount,
-          vehicle_id: argv.vehicle_id,
-          phillips_account_email: argv.email,
-          status: "Highest",
-        }
-      );
+      const response = await axios.post("http://127.0.0.1:80/api/bid/create", {
+        amount: bidAmount,
+        vehicle_id: argv.vehicle_id,
+        phillips_account_email: argv.email,
+        status: "Highest",
+      });
       logger.success(`${response.data.status}`);
       return true;
     }
@@ -289,7 +290,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
 
 const run = async () => {
   const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/google-chrome',
+    executablePath: "/usr/bin/google-chrome",
     // executablePath: "/usr/bin/google-chrome",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
     headless: true,
