@@ -43,7 +43,7 @@ class AuctionSniper {
 
   async init() {
     this.browser = await puppeteer.launch({
-      executablePath: '/usr/bin/chromium-browser'
+      executablePath: '/usr/bin/chromium-browser',
       headless: true, // Set to true in production
       args: ["--no-sandbox"],
     });

@@ -4,7 +4,7 @@ import https from "https";
 
 // (async () => {
 //   const browser = await puppeteer.launch({
-//     // executablePath: '/usr/bin/chromium-browser'
+//     // executablePath: '/usr/bin/chromium-browser',
 //     args: ["--no-sandbox", "--disable-setuid-sandbox"],
 //     headless: true,
 //   });
