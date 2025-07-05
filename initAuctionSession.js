@@ -16,9 +16,13 @@ const argv = yargs(hideBin(process.argv))
     description: "Login password",
     demandOption: true,
   })
+  .option("auction_session_id", {
+    alias: "a",
+    type: "number",
+    demandOption: true,
+  })
   .help()
   .alias("help", "h").argv;
-console.log("OUT");
 
 const sendResultToAPIURL =
   "http://127.0.0.1:80/api/auction/init_test_results";
@@ -29,7 +33,6 @@ const sendResultToAPI = async (payload) => {
   process.exit(0);
 };
 (async () => {
-  console.log("Started");
   // Initialize the browser
   const browser = await puppeteer.launch({
     // executablePath: '/usr/bin/chromium-browser',
@@ -59,7 +62,7 @@ const sendResultToAPI = async (payload) => {
 
     // Go to login test
     // Navigate to login page
-    await page.goto("https://phillipsauctioneers.co.ke/my-account", {
+    await page.goto("https://phillipsauctioneers.co.ke/my-account/", {
       waitUntil: "domcontentloaded",
       timeout: 900000,
     });
@@ -86,12 +89,12 @@ const sendResultToAPI = async (payload) => {
     const errorElement = await page.$("ul.user-registration-error");
     if (errorElement) {
       const payload1 = {
+        auction_session_id: argv.auction_session_id,
         success: false,
         message: `Could not log in with the email ${argv.email} and password ${argv.password} (The previous sentence has no ".", if it does then that is part of the password used.)`,
         status: 404,
       };
       sendResultToAPI(payload1);
-      console.log(JSON.stringify(payload1));
       return;
     }
 
@@ -142,7 +145,7 @@ const sendResultToAPI = async (payload) => {
     // Navigate to the auction page
 
     await page.goto("about:blank");
-    await page.goto("http://phillips.adilirealestate.com/bidSuccess.html", {
+    await page.goto(vehicle_url, {
       waitUntil: "domcontentloaded",
       timeout: 900000,
     });
@@ -182,64 +185,61 @@ const sendResultToAPI = async (payload) => {
             amount: 1000,
             vehicle_id: vehicle_id,
             phillips_account_email: argv.email,
-            status: "Outbidded",
+            status: "Outbidded (Test)",
+            bid_stage_id: 1,
           }
         );
         const payload2 = {
+          auction_session_id: argv.auction_session_id,
           email: argv.email,
           success: true,
           message: `Account ${argv.email} tested successfully. The account will be used in bidding.`,
           status: 200,
         };
         sendResultToAPI(payload2);
-        console.log(JSON.stringify(payload2));
         return;
       }
 
       const successElement = await page.$("div.woocommerce-message");
       if (successElement) {
         // Shows that bid was placed, high enough
-        const response = await axios.post(
-          "http://127.0.0.1/api/bid/create",
-          {
-            amount: 1000,
-            vehicle_id: vehicle_id,
-            phillips_account_email: argv.email,
-            status: "Highest",
-          }
-        );
+        const response = await axios.post("http://127.0.0.1/api/bid/create", {
+          amount: 1000,
+          vehicle_id: vehicle_id,
+          phillips_account_email: argv.email,
+          status: "Highest (Test)",
+          bid_stage_id: 1,
+        });
         const payload3 = {
+          auction_session_id: argv.auction_session_id,
           email: argv.email,
           success: true,
           message: `Account ${argv.email} tested successfully. The account will be used in bidding.`,
           status: 200,
         };
         sendResultToAPI(payload3);
-        console.log(JSON.stringify(payload3));
         return;
       }
     } catch (error) {
       const payload4 = {
+        auction_session_id: argv.auction_session_id,
         email: argv.email,
         success: false,
         message: `Account P4 ${argv.email} failed the test. Try manually to see if it works, if it is authorized to bid, then retry initializing.`,
         status: 403,
       };
       sendResultToAPI(payload4);
-      console.log(error);
-      console.log(JSON.stringify(payload4));
       return;
     }
   } catch (error) {
-    console.log(error);
     const payload5 = {
+      auction_session_id: argv.auction_session_id,
       error: error,
       success: false,
       message: `Account P5 ${argv.email} failed the test. Try manually to see if it works, if it is authorized to bid, then retry initializing.`,
       status: 403,
     };
     sendResultToAPI(payload5);
-    console.log(JSON.stringify(payload5));
     return;
   } finally {
     browser.close();

@@ -15,10 +15,12 @@ const argv = yargs(hideBin(process.argv))
   .option("password", { alias: "p", type: "string", demandOption: true })
   .option("vehicle_id", { alias: "v", type: "number", demandOption: true })
   .option("vehicle_name", { alias: "n", type: "string", demandOption: true })
-  .option("bid_stage", { alias: "s", type: "string", demandOption: true })
+  .option("bid_stage_name", { alias: "s", type: "string", demandOption: true })
+  .option("bid_stage_id", { alias: "bsi", type: "number", demandOption: true })
   .help()
   .alias("help", "h").argv;
-
+let trials = 1;
+let maximum_placed = false;
 const createLogger = () => {
   const logDir = "logs";
   const textLogPath = path.join(
@@ -63,7 +65,7 @@ const createLogger = () => {
       formatTime() +
       ": We've been outbid, another sprint:\n" +
       "Stage: " +
-      argv.bid_stage +
+      argv.bid_stage_name +
       "\n" +
       "Account: " +
       argv.email +
@@ -85,7 +87,7 @@ const createLogger = () => {
       formatTime() +
       ": We've began bidding, first sprint:\n" +
       "Stage: " +
-      argv.bid_stage +
+      argv.bid_stage_name +
       "\n" +
       "Account: " +
       argv.email +
@@ -190,7 +192,8 @@ const prepBid = async (page, bidAmount) => {
   logger.info("Waiting for bid confirmation popup");
 };
 
-const placeBid = async (page, url, bidAmount, chasing = false) => {
+const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
+  console.log("Place bid called");
   logger.divider();
   if (!chasing) {
     logger.info(`Navigating to auction page`);
@@ -198,11 +201,13 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
     logger.info(`We are chasing the highest`);
   }
 
+  console.log(1);
   await page.goto(url, {
     waitUntil: "domcontentloaded", // Changed from networkidle2
     timeout: 60000,
   });
 
+  console.log(2);
   logger.info(`Placing bid of ${bidAmount}`);
   await prepBid(page, bidAmount);
 
@@ -220,16 +225,66 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
     if (errorElement) {
       logger.info(`There is a higher current bid`);
 
+      if (maximum_placed == false) {
         const response = await axios.post(
           "http://127.0.0.1:80/api/bid/create",
           {
             amount: bidAmount,
             vehicle_id: argv.vehicle_id,
             phillips_account_email: argv.email,
+            bid_stage_id: argv.bid_stage_id,
             status: "Outbidded",
           }
         );
-        return true;
+
+        console.log(
+          `maximum not reached calling place bid sending outbidded notification`
+        );
+        console.log(maximum_placed);
+      } else {
+        const response = await axios.post(
+          "http://127.0.0.1:80/api/bid/create",
+          {
+            amount: bidAmount,
+            vehicle_id: argv.vehicle_id,
+            phillips_account_email: argv.email,
+            bid_stage_id: argv.bid_stage_id,
+            status: "Outbudgeted",
+          }
+        );
+
+        console.log(
+          `maximum reached calling place bid sending outbudgetted notification`
+        );
+        console.log(maximum_placed);
+      }
+
+      trials += 1;
+
+      if (
+        argv.bid_stage_name == "aggressive" &&
+        argv.amount + argv.increment * trials <= argv.maximum_amount &&
+        maximum_placed == false
+      ) {
+        console.log(`maximum not reached calling place bid`);
+        console.log(maximum_placed);
+        await placeBid(
+          browser,
+          page,
+          argv.url,
+          argv.amount + argv.increment * trials
+        );
+      } else if (
+        argv.amount + argv.increment * trials > argv.maximum_amount &&
+        maximum_placed == false
+      ) {
+        maximum_placed = true;
+        console.log(`maximum reached calling place bid`);
+        console.log(maximum_placed);
+        await placeBid(browser, page, argv.url, argv.maximum_amount);
+      }
+
+      return true;
     }
 
     const successElement = await page.$("div.woocommerce-message");
@@ -241,6 +296,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
           amount: bidAmount,
           vehicle_id: argv.vehicle_id,
           phillips_account_email: argv.email,
+          bid_stage_id: argv.bid_stage_id,
           status: "Highest",
         }
       );
@@ -259,7 +315,7 @@ const placeBid = async (page, url, bidAmount, chasing = false) => {
         );
         setTimeout(resolve, waitTime);
       });
-      return placeBid(page, url, bidAmount, true);
+      return placeBid(browser, page, url, bidAmount, true);
     } else if (!err.message.includes("waiting for selector")) {
       logger.info(`Error checking bid status: ${err.message}`);
     }
@@ -276,16 +332,6 @@ const run = async () => {
   });
   const page = await browser.newPage();
 
-  // Set up request interception to block images
-  await page.setRequestInterception(true);
-  page.on("request", (request) => {
-    if (request.resourceType() === "image") {
-      request.abort();
-    } else {
-      request.continue();
-    }
-  });
-
   try {
     await page.setViewport({ width: 1366, height: 768 });
     await page.setUserAgent(
@@ -293,14 +339,13 @@ const run = async () => {
     );
 
     await login(page, argv.email, argv.password);
-    const result = await placeBid(page, argv.url, argv.amount);
+    const result = await placeBid(browser, page, argv.url, argv.amount);
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
 
     return { success: true, message: result };
   } catch (error) {
     logger.info(`${error.message}`);
-    await page.screenshot({ path: "error.png" });
     return { success: false, error: error.message };
   } finally {
     browser.close();

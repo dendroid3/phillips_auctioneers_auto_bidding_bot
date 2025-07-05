@@ -64,6 +64,7 @@ const placeBid = async (page, url, vehicle_id) => {
           vehicle_id: vehicle_id,
           phillips_account_email: argv.email,
           status: "Outbidded",
+          bid_stage_id: 1
         }
       );
       console.log("Bid failed but successfully placed");
@@ -80,6 +81,7 @@ const placeBid = async (page, url, vehicle_id) => {
           vehicle_id: vehicle_id,
           phillips_account_email: argv.email,
           status: "Highest",
+          bid_stage_id: 1
         }
       );
       console.log("bid successfully placed");
@@ -148,7 +150,7 @@ const login = async (page, email, password) => {
 const bidTrial = async (page) => {
   try {
     console.log("BidTrial Called");
-    await page.goto("http://phillips.adilirealestate.com/liveAuction.html", {
+    await page.goto("https://phillipsauctioneers.co.ke/live-auction/", {
       waitUntil: "domcontentloaded",
       timeout: 900000,
     });
@@ -180,6 +182,7 @@ const bidTrial = async (page) => {
         console.log("API Response:", response.data);
         console.log("Data successfully sent to API");
 
+        console.log(response.data.last_vehicle_id)
         // This is where we should try to bid
         await placeBid(
           page,
@@ -207,9 +210,9 @@ const bidTrial = async (page) => {
 
 const run = async () => {
   const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/google-chrome',
+    executablePath: "/usr/bin/google-chrome",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    headless: true,
+    headless: false,
   });
   const page = await browser.newPage();
 

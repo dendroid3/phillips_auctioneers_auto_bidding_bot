@@ -4,9 +4,9 @@ import https from "https";
 
 // (async () => {
 //   const browser = await puppeteer.launch({
-//     // executablePath: '/usr/bin/google-chrome',
+//     // executablePath: '/usr/bin/chromium-browser',
 //     args: ["--no-sandbox", "--disable-setuid-sandbox"],
-//     headless: true,
+//     headless: false,
 //   });
 //   const page = await browser.newPage();
 

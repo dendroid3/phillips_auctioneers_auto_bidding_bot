@@ -47,7 +47,7 @@ const scrape = async () => {
         // executablePath: '/snap/bin/chromium', 
         executablePath: '/usr/bin/google-chrome',
         args: ['--no-sandbox', '--disable-setuid-sandbox'], 
-        headless: true // Use the new headless mode
+        headless: false // Use the new headless mode
     });
     const page = await browser.newPage();
     const url = "https://phillipsauctioneers.co.ke";
