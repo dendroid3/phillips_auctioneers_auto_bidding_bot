@@ -6,7 +6,7 @@ import https from "https";
 //   const browser = await puppeteer.launch({
 //     // executablePath: '/usr/bin/chromium-browser',
 //     args: ["--no-sandbox", "--disable-setuid-sandbox"],
-//     headless: 'new,
+//     headless: 'new',
 //   });
 //   const page = await browser.newPage();
 

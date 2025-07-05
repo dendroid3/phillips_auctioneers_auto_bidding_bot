@@ -328,7 +328,7 @@ const run = async () => {
     // executablePath: "/snap/bin/chromium",
     executablePath: "/usr/bin/google-chrome",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    headless: 'new,
+    headless: 'new',
   });
   const page = await browser.newPage();
 
