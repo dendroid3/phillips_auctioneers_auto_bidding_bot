@@ -38,7 +38,7 @@ const sendResultToAPI = async (payload) => {
     // executablePath: '/usr/bin/chromium-browser',
     executablePath: "/usr/bin/google-chrome",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    headless: true,
+    headless: 'new,
   });
   try {
     // Open page
