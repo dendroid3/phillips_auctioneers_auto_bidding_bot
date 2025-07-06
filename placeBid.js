@@ -227,7 +227,7 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
 
       if (maximum_placed == false) {
         const response = await axios.post(
-          "http://127.0.0.1:80/api/bid/create",
+          "http://127.0.0.1:8000/api/bid/create",
           {
             amount: bidAmount,
             vehicle_id: argv.vehicle_id,
@@ -243,7 +243,7 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
         console.log(maximum_placed);
       } else {
         const response = await axios.post(
-          "http://127.0.0.1:80/api/bid/create",
+          "http://127.0.0.1:8000/api/bid/create",
           {
             amount: bidAmount,
             vehicle_id: argv.vehicle_id,
@@ -291,7 +291,7 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
     const successElement = await page.$("div.woocommerce-message");
     if (successElement) {
       logger.success(`We are the highest bidder.`);
-      const response = await axios.post("http://127.0.0.1:80/api/bid/create", {
+      const response = await axios.post("http://127.0.0.1:8000/api/bid/create", {
         amount: bidAmount,
         vehicle_id: argv.vehicle_id,
         phillips_account_email: argv.email,
@@ -318,7 +318,6 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
       logger.info(`Error checking bid status: ${err.message}`);
       return placeBid(browser, page, url, bidAmount, true);
     }
-    // throw err;
   }
 };
 
@@ -345,7 +344,7 @@ const run = async () => {
     return { success: true, message: result };
   } catch (error) {
     logger.info(`${error.message}`);
-    return { success: false, error: error.message };
+    return { success: true, error: error.message };
   } finally {
     browser.close();
     logger.success("Sprint Complete");
@@ -356,9 +355,9 @@ const run = async () => {
 
 run()
   .then((result) => {
-    if (!result.success) process.exit(1);
+    if (!result.success) process.exit(0);
   })
   .catch((err) => {
     logger.info(`Fatal error: ${err}`);
-    process.exit(1);
+    process.exit(0);
   });
