@@ -19,7 +19,7 @@ const argv = yargs(hideBin(process.argv))
   .option("bid_stage_id", { alias: "bsi", type: "number", demandOption: true })
   .help()
   .alias("help", "h").argv;
-let trials = 1;
+let trials = 0;
 let maximum_placed = false;
 const createLogger = () => {
   const logDir = "logs";
