@@ -218,7 +218,7 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
         const successMsg = document.querySelector("div.woocommerce-message");
         return errorMsg || successMsg;
       },
-      { timeout: 100000 }
+      { timeout: 10000 }
     );
 
     const errorElement = await page.$("ul.woocommerce-error");
@@ -275,6 +275,7 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
           argv.amount + argv.increment * trials
         );
       } else if (
+        argv.bid_stage_name == "aggressive" &&
         argv.amount + argv.increment * trials > argv.maximum_amount &&
         maximum_placed == false
       ) {
@@ -290,16 +291,13 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
     const successElement = await page.$("div.woocommerce-message");
     if (successElement) {
       logger.success(`We are the highest bidder.`);
-      const response = await axios.post(
-        "http://127.0.0.1:80/api/bid/create",
-        {
-          amount: bidAmount,
-          vehicle_id: argv.vehicle_id,
-          phillips_account_email: argv.email,
-          bid_stage_id: argv.bid_stage_id,
-          status: "Highest",
-        }
-      );
+      const response = await axios.post("http://127.0.0.1:80/api/bid/create", {
+        amount: bidAmount,
+        vehicle_id: argv.vehicle_id,
+        phillips_account_email: argv.email,
+        bid_stage_id: argv.bid_stage_id,
+        status: "Highest",
+      });
       logger.success(`${response.data.status}`);
       return true;
     }
@@ -318,8 +316,9 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
       return placeBid(browser, page, url, bidAmount, true);
     } else if (!err.message.includes("waiting for selector")) {
       logger.info(`Error checking bid status: ${err.message}`);
+      return placeBid(browser, page, url, bidAmount, true);
     }
-    throw err;
+    // throw err;
   }
 };
 
@@ -328,7 +327,7 @@ const run = async () => {
     // executablePath: "/snap/bin/chromium",
     executablePath: "/usr/bin/google-chrome",
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    headless: 'new',
+    headless: "new",
   });
   const page = await browser.newPage();
 
