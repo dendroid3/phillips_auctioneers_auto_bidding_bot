@@ -227,7 +227,7 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
 
       if (maximum_placed == false) {
         const response = await axios.post(
-          "http://127.0.0.1:8000/api/bid/create",
+          "http://127.0.0.1:80/api/bid/create",
           {
             amount: bidAmount,
             vehicle_id: argv.vehicle_id,
@@ -243,7 +243,7 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
         console.log(maximum_placed);
       } else {
         const response = await axios.post(
-          "http://127.0.0.1:8000/api/bid/create",
+          "http://127.0.0.1:80/api/bid/create",
           {
             amount: bidAmount,
             vehicle_id: argv.vehicle_id,
@@ -291,7 +291,7 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
     const successElement = await page.$("div.woocommerce-message");
     if (successElement) {
       logger.success(`We are the highest bidder.`);
-      const response = await axios.post("http://127.0.0.1:8000/api/bid/create", {
+      const response = await axios.post("http://127.0.0.1:80/api/bid/create", {
         amount: bidAmount,
         vehicle_id: argv.vehicle_id,
         phillips_account_email: argv.email,
