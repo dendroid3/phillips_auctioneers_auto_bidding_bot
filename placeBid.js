@@ -157,7 +157,7 @@ const login = async (page, email, password) => {
   logger.info("Navigating to login page");
   await page.goto("https://phillipsauctioneers.co.ke/my-account", {
     waitUntil: "domcontentloaded", // Changed from networkidle2
-    timeout: 60000,
+    timeout: 600000,
   });
 
   logger.info("Entering credentials");
@@ -170,7 +170,7 @@ const login = async (page, email, password) => {
   await page.click('[name="login"]');
   await page.waitForNavigation({
     waitUntil: "domcontentloaded",
-    timeout: 10000,
+    timeout: 100000,
   });
   logger.success("Logged in successfully");
 };
@@ -218,7 +218,7 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
         const successMsg = document.querySelector("div.woocommerce-message");
         return errorMsg || successMsg;
       },
-      { timeout: 10000 }
+      { timeout: 100000 }
     );
 
     const errorElement = await page.$("ul.woocommerce-error");
@@ -279,7 +279,7 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
         maximum_placed == false
       ) {
         maximum_placed = true;
-        console.log(`maximum reached calling place bid`);
+        console.log(`maximum reached calling place bid with maximum amount`);
         console.log(maximum_placed);
         await placeBid(browser, page, argv.url, argv.maximum_amount);
       }
@@ -309,7 +309,7 @@ const placeBid = async (browser, page, url, bidAmount, chasing = false) => {
         "ℹ️ No confirmation message detected within timeout period, trying to place bid again."
       );
       await new Promise((resolve) => {
-        const waitTime = Math.floor(Math.random() * 1001) + 1000;
+        const waitTime = Math.floor(Math.random() * 10001) + 10000;
         logger.info(
           `New bid will be placed in ~${Math.round(waitTime / 100)} seconds`
         );
