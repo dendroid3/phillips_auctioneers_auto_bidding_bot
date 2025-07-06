@@ -157,7 +157,7 @@ const login = async (page, email, password) => {
   logger.info("Navigating to login page");
   await page.goto("https://phillipsauctioneers.co.ke/my-account", {
     waitUntil: "domcontentloaded", // Changed from networkidle2
-    timeout: 600000,
+    timeout: 60000,
   });
 
   logger.info("Entering credentials");
@@ -170,7 +170,7 @@ const login = async (page, email, password) => {
   await page.click('[name="login"]');
   await page.waitForNavigation({
     waitUntil: "domcontentloaded",
-    timeout: 100000,
+    timeout: 10000,
   });
   logger.success("Logged in successfully");
 };
