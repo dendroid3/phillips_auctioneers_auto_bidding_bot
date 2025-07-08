@@ -92,33 +92,33 @@ class AuctionSniper {
     }
   }
 
-  async confirmBid(tab) {
-    try {
-      await tab.page.bringToFront();
-      await tab.page.waitForSelector(".ywcact-auction-confirm", {
-        visible: true,
-      });
-      await tab.page.click(".ywcact-auction-confirm", { delay: 100 });
+  // async confirmBid(tab) {
+  //   try {
+  //     await tab.page.bringToFront();
+  //     await tab.page.waitForSelector(".ywcact-auction-confirm", {
+  //       visible: true,
+  //     });
+  //     await tab.page.click(".ywcact-auction-confirm", { delay: 100 });
 
-      await tab.page.waitForSelector(".ywcact-modal-button-confirm-bid", {
-        visible: true,
-        timeout: 3000,
-      });
+  //     await tab.page.waitForSelector(".ywcact-modal-button-confirm-bid", {
+  //       visible: true,
+  //       timeout: 3000,
+  //     });
 
-      const buttons = await tab.page.$$(".ywcact-modal-button-confirm-bid");
-      if (buttons.length >= 2) {
-        const box = await buttons[1].boundingBox();
-        if (!box) throw new Error("Confirm button not clickable");
-        await buttons[1].click({ delay: 100 });
-        tab.triggered = true;
-        console.log(`\u2705 Confirmed bid on ${tab.id} of ${tab.amount}`);
-      }
-    } catch (err) {
-      console.error(
-        `\u274c Failed to confirm bid on ${tab.id}: ${err.message}`
-      );
-    }
-  }
+  //     const buttons = await tab.page.$$(".ywcact-modal-button-confirm-bid");
+  //     if (buttons.length >= 2) {
+  //       const box = await buttons[1].boundingBox();
+  //       if (!box) throw new Error("Confirm button not clickable");
+  //       await buttons[1].click({ delay: 100 });
+  //       tab.triggered = true;
+  //       console.log(`\u2705 Confirmed bid on ${tab.id} of ${tab.amount}`);
+  //     }
+  //   } catch (err) {
+  //     console.error(
+  //       `\u274c Failed to confirm bid on ${tab.id}: ${err.message}`
+  //     );
+  //   }
+  // }
 
   async triggerBids() {
     const response = await axios.post(
@@ -137,15 +137,15 @@ class AuctionSniper {
     // Placing the bid
     for (const tab of this.tabs.filter((t) => t.ready)) {
       await tab.page.bringToFront();
-      await tab.page.waitForSelector(".ywcact-auction-confirm", {
-        visible: true,
-      });
-      await tab.page.click(".ywcact-auction-confirm", { delay: 100 });
+      // await tab.page.waitForSelector(".ywcact-auction-confirm", {
+      //   visible: true,
+      // });
+      // await tab.page.click(".ywcact-auction-confirm", { delay: 100 });
 
-      await tab.page.waitForSelector(".ywcact-modal-button-confirm-bid", {
-        visible: true,
-        timeout: 3000,
-      });
+      // await tab.page.waitForSelector(".ywcact-modal-button-confirm-bid", {
+      //   visible: true,
+      //   timeout: 3000,
+      // });
 
       const buttons = await tab.page.$$(".ywcact-modal-button-confirm-bid");
       if (buttons.length >= 2) {
