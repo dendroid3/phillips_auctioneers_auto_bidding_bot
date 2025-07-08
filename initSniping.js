@@ -127,7 +127,7 @@ class AuctionSniper {
         await mouse.move(box.x + box.width / 2, box.y + box.height / 2);
         await mouse.down();
         await mouse.up();
-
+        await new Promise((r) => setTimeout(r, 200));
         tab.triggered = true;
         console.log(`\u2705 Confirmed bid on ${tab.id} of ${tab.amount}`);
       }
