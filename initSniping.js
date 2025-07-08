@@ -39,7 +39,7 @@ class AuctionSniper {
   }
 
   async login() {
-    console.log("\uD83D\uDD10 Logging in...");
+    console.log("🔐 Logging in...");
     await this.mainPage.goto("https://phillipsauctioneers.co.ke/my-account", {
       waitUntil: "networkidle2",
       timeout: 600000,
@@ -49,11 +49,11 @@ class AuctionSniper {
     await this.mainPage.type("#password", argv.password);
     await this.mainPage.click('[name="login"]');
     await this.mainPage.waitForNavigation({ waitUntil: "networkidle2" });
-    console.log("\u2705 Login successful.");
+    console.log("✅ Login successful.");
   }
 
   async prepareTabs(vehicleData) {
-    console.log(`\ud83e\uddf9 Preparing ${vehicleData.length} tabs...`);
+    console.log(`🧹 Preparing ${vehicleData.length} tabs...`);
     for (const vehicle of vehicleData) {
       const tab = await this.browser.newPage();
       const cookies = await this.mainPage.cookies();
@@ -89,30 +89,27 @@ class AuctionSniper {
         placedMax: initialAmount >= vehicle.maximum_amount,
       });
 
-      console.log(`\u2705 Tab ready for vehicle ${vehicle.id}`);
+      console.log(`✅ Tab ready for vehicle ${vehicle.id}`);
     }
   }
 
   async confirmBid(tab) {
     try {
       await tab.page.bringToFront();
-      await new Promise((r) => setTimeout(r, 200));
       await tab.page.waitForSelector(".ywcact-auction-confirm", {
         visible: true,
       });
       await tab.page.click(".ywcact-auction-confirm", { delay: 100 });
 
-      // try {
-      //   await tab.page.waitForFunction(
-      //     () => {
-      //       const modal = document.getElementById("confirmationModal");
-      //       return modal && getComputedStyle(modal).display === "flex";
-      //     },
-      //     { timeout: 2000 }
-      //   );
-      // } catch {
-      //   //return this.confirmBid(tab); // retry
-      // }
+      try {
+        await tab.page.waitForFunction(
+          () => {
+            const modal = document.getElementById("confirmationModal");
+            return modal && getComputedStyle(modal).display === "flex";
+          },
+          { timeout: 2000 }
+        );
+      } catch {}
 
       await tab.page.waitForSelector(".ywcact-modal-button-confirm-bid", {
         visible: true,
@@ -123,18 +120,12 @@ class AuctionSniper {
       if (buttons.length >= 2) {
         const box = await buttons[1].boundingBox();
         if (!box) throw new Error("Confirm button not clickable");
-        const mouse = tab.page.mouse;
-        await mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-        await mouse.down();
-        await mouse.up();
-        await new Promise((r) => setTimeout(r, 200));
+        await buttons[1].click({ delay: 100 });
         tab.triggered = true;
-        console.log(`\u2705 Confirmed bid on ${tab.id} of ${tab.amount}`);
+        console.log(`✅ Confirmed bid on ${tab.id} of ${tab.amount}`);
       }
     } catch (err) {
-      console.error(
-        `\u274c Failed to confirm bid on ${tab.id}: ${err.message}`
-      );
+      console.error(`❌ Failed to confirm bid on ${tab.id}: ${err.message}`);
     }
   }
 
@@ -148,9 +139,7 @@ class AuctionSniper {
     );
 
     const vehiclesToTrigger = response.data;
-    console.log(
-      `\ud83d\ude80 Triggering bids for ${vehiclesToTrigger.length} vehicles...`
-    );
+    console.log(`🚀 Triggering bids for ${vehiclesToTrigger.length} vehicles...`);
 
     for (const vehicle of vehiclesToTrigger) {
       const tab = this.tabs.find(
@@ -167,11 +156,11 @@ class AuctionSniper {
           "ul.woocommerce-error li",
           (el) => el.textContent.trim()
         );
-        console.log(`\u274c Error on ${tab.id}: ${errorMessage}`);
+        console.log(`❌ Error on ${tab.id}: ${errorMessage}`);
 
         if (errorMessage.toLowerCase().includes("higher")) {
           if (tab.placedMax) {
-            console.log(`\u274c Max bid already placed on ${tab.id}`);
+            console.log(`❌ Max bid already placed on ${tab.id}`);
             tab.ready = false;
             await axios.post("http://127.0.0.1:80/api/bid/create", {
               amount: tab.amount,
@@ -193,10 +182,9 @@ class AuctionSniper {
           }
 
           tab.amount = newAmount;
-          console.log(`\u21ba Retrying ${tab.id} with amount ${tab.amount}`);
+          console.log(`↺ Retrying ${tab.id} with amount ${tab.amount}`);
 
           await tab.page.bringToFront();
-          await new Promise((r) => setTimeout(r, 200));
           await tab.page.click("#_actual_bid", { clickCount: 3 });
           await tab.page.keyboard.press("Backspace");
           await tab.page.type("#_actual_bid", tab.amount.toString(), {
@@ -227,7 +215,7 @@ class AuctionSniper {
           "div.woocommerce-message",
           (el) => el.textContent.trim()
         );
-        console.log(`\u2705 Success on ${tab.id}: ${successMessage}`);
+        console.log(`✅ Success on ${tab.id}: ${successMessage}`);
         tab.ready = false;
         await axios.post("http://127.0.0.1:80/api/bid/create", {
           amount: tab.amount,
@@ -247,7 +235,7 @@ class AuctionSniper {
 
 function getDelayUntilTriggerTime(triggerTime) {
   const now = new Date();
-  const [hour, minute, second] = triggerTime.split(":").map(Number);
+  const [hour, minute, second] = triggerTime.split(":" ).map(Number);
   const trigger = new Date(now);
   trigger.setHours(hour, minute, second, 0);
   if (trigger < now) trigger.setDate(trigger.getDate() + 1);
@@ -258,12 +246,12 @@ function startRetryLoop(sniper, intervalMs = 5000) {
   const interval = setInterval(async () => {
     const activeTabs = sniper.tabs.filter((tab) => tab.ready);
     if (activeTabs.length === 0) {
-      console.log("\ud83d\udccb All bids complete. Exiting.");
+      console.log("📋 All bids complete. Exiting.");
       clearInterval(interval);
       await sniper.close();
       process.exit(0);
     }
-    console.log(`\uD83D\uDD01 Retrying ${activeTabs.length} tab(s)...`);
+    console.log(`🔁 Retrying ${activeTabs.length} tab(s)...`);
     await sniper.triggerBids();
   }, intervalMs);
 }
@@ -280,18 +268,18 @@ function startRetryLoop(sniper, intervalMs = 5000) {
       phillips_account_id: argv.phillips_account_id,
     }
   );
+  console.log(initResponse.data);
+
   await sniper.prepareTabs(initResponse.data);
 
   const delay = getDelayUntilTriggerTime(argv.trigger_time);
   console.log(
-    `\u23f3 Waiting until ${argv.trigger_time} (in ${Math.round(
-      delay / 1000
-    )}s)...`
+    `⏳ Waiting until ${argv.trigger_time} (in ${Math.round(delay / 1000)}s)...`
   );
 
   setTimeout(async () => {
     console.log(
-      `\ud83d\udea8 Triggering bids at ${new Date().toLocaleTimeString()}`
+      `🚨 Triggering bids at ${new Date().toLocaleTimeString()}`
     );
     await sniper.triggerBids();
     startRetryLoop(sniper, 3000);
