@@ -140,7 +140,7 @@ class AuctionSniper {
 
   async triggerBids() {
     const response = await axios.post(
-      "http://127.0.0.1:8000/api/sniping/trigger",
+      "http://127.0.0.1:80/api/sniping/trigger",
       {
         auction_session_id: argv.auction_session_id,
         phillips_account_id: argv.phillips_account_id,
@@ -173,7 +173,7 @@ class AuctionSniper {
           if (tab.placedMax) {
             console.log(`\u274c Max bid already placed on ${tab.id}`);
             tab.ready = false;
-            await axios.post("http://127.0.0.1:8000/api/bid/create", {
+            await axios.post("http://127.0.0.1:80/api/bid/create", {
               amount: tab.amount,
               vehicle_id: tab.id,
               phillips_account_email: argv.email,
@@ -209,7 +209,7 @@ class AuctionSniper {
 
           await this.confirmBid(tab);
 
-          await axios.post("http://127.0.0.1:8000/api/bid/create", {
+          await axios.post("http://127.0.0.1:80/api/bid/create", {
             amount: tab.amount,
             vehicle_id: tab.id,
             phillips_account_email: argv.email,
@@ -229,7 +229,7 @@ class AuctionSniper {
         );
         console.log(`\u2705 Success on ${tab.id}: ${successMessage}`);
         tab.ready = false;
-        await axios.post("http://127.0.0.1:8000/api/bid/create", {
+        await axios.post("http://127.0.0.1:80/api/bid/create", {
           amount: tab.amount,
           vehicle_id: tab.id,
           phillips_account_email: argv.email,
@@ -274,7 +274,7 @@ function startRetryLoop(sniper, intervalMs = 5000) {
   await sniper.login();
 
   const initResponse = await axios.post(
-    "http://127.0.0.1:8000/api/sniping/init",
+    "http://127.0.0.1:80/api/sniping/init",
     {
       auction_session_id: argv.auction_session_id,
       phillips_account_id: argv.phillips_account_id,
