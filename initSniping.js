@@ -158,10 +158,10 @@ class AuctionSniper {
         );
         console.log(`❌ Error on ${tab.id}: ${errorMessage}`);
 
-        if (errorMessage.toLowerCase().includes("higher")) {
-          const nextBid = tab.amount + tab.increment;
+        const attemptedAmount = tab.amount + tab.increment;
 
-          if (tab.amount >= tab.maxAmount || nextBid > tab.maxAmount) {
+        if (errorMessage.toLowerCase().includes("higher")) {
+          if (tab.amount >= tab.maxAmount || attemptedAmount > tab.maxAmount) {
             console.log(`❌ Max bid already placed on ${tab.id}`);
             tab.ready = false;
             await axios.post("http://127.0.0.1:80/api/bid/create", {
@@ -174,7 +174,7 @@ class AuctionSniper {
             continue;
           }
 
-          const newAmount = nextBid;
+          const newAmount = attemptedAmount;
           console.log(`↺ Retrying ${tab.id} with amount ${newAmount}`);
 
           tab.amount = newAmount;
@@ -183,7 +183,7 @@ class AuctionSniper {
           await tab.page.bringToFront();
           await tab.page.click("#_actual_bid", { clickCount: 3 });
           await tab.page.keyboard.press("Backspace");
-          await tab.page.type("#_actual_bid", tab.amount.toString(), {
+          await tab.page.type("#_actual_bid", newAmount.toString(), {
             delay: 100,
           });
 
@@ -194,13 +194,20 @@ class AuctionSniper {
           await this.confirmBid(tab);
 
           await axios.post("http://127.0.0.1:80/api/bid/create", {
-            amount: tab.amount,
+            amount: newAmount,
             vehicle_id: tab.id,
             phillips_account_email: argv.email,
             bid_stage_id: argv.bid_stage_id,
             status: "Outbidded",
           });
         } else {
+          await axios.post("http://127.0.0.1:80/api/bid/create", {
+            amount: tab.amount,
+            vehicle_id: tab.id,
+            phillips_account_email: argv.email,
+            bid_stage_id: argv.bid_stage_id,
+            status: "Error",
+          });
           tab.ready = false;
         }
       }
@@ -264,15 +271,11 @@ function startRetryLoop(sniper, intervalMs = 5000) {
       phillips_account_id: argv.phillips_account_id,
     }
   );
-  console.log(initResponse.data);
-
   await sniper.prepareTabs(initResponse.data);
 
   const delay = getDelayUntilTriggerTime(argv.trigger_time);
   console.log(
-    `⏳ Waiting until ${argv.trigger_time} (in ${Math.round(
-      delay / 1000
-    )}s)...`
+    `⏳ Waiting until ${argv.trigger_time} (in ${Math.round(delay / 1000)}s)...`
   );
 
   setTimeout(async () => {
