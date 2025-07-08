@@ -31,7 +31,7 @@ class AuctionSniper {
   async init() {
     this.browser = await puppeteer.launch({
       executablePath: "/usr/bin/google-chrome",
-      headless: true,
+      headless: false,
       args: ["--no-sandbox"],
     });
     this.mainPage = await this.browser.newPage();
@@ -159,7 +159,9 @@ class AuctionSniper {
         console.log(`❌ Error on ${tab.id}: ${errorMessage}`);
 
         if (errorMessage.toLowerCase().includes("higher")) {
-          if (tab.placedMax) {
+          const nextBid = tab.amount + tab.increment;
+
+          if (tab.amount >= tab.maxAmount || nextBid > tab.maxAmount) {
             console.log(`❌ Max bid already placed on ${tab.id}`);
             tab.ready = false;
             await axios.post("http://127.0.0.1:80/api/bid/create", {
@@ -172,17 +174,11 @@ class AuctionSniper {
             continue;
           }
 
-          const nextBid = tab.amount + tab.increment;
-          const newAmount = nextBid > tab.maxAmount ? tab.maxAmount : nextBid;
-          tab.placedMax = newAmount >= tab.maxAmount;
-
-          if (newAmount === tab.amount) {
-            tab.ready = false;
-            continue;
-          }
+          const newAmount = nextBid;
+          console.log(`↺ Retrying ${tab.id} with amount ${newAmount}`);
 
           tab.amount = newAmount;
-          console.log(`↺ Retrying ${tab.id} with amount ${tab.amount}`);
+          tab.placedMax = newAmount >= tab.maxAmount;
 
           await tab.page.bringToFront();
           await tab.page.click("#_actual_bid", { clickCount: 3 });
@@ -274,13 +270,13 @@ function startRetryLoop(sniper, intervalMs = 5000) {
 
   const delay = getDelayUntilTriggerTime(argv.trigger_time);
   console.log(
-    `⏳ Waiting until ${argv.trigger_time} (in ${Math.round(delay / 1000)}s)...`
+    `⏳ Waiting until ${argv.trigger_time} (in ${Math.round(
+      delay / 1000
+    )}s)...`
   );
 
   setTimeout(async () => {
-    console.log(
-      `🚨 Triggering bids at ${new Date().toLocaleTimeString()}`
-    );
+    console.log(`🚨 Triggering bids at ${new Date().toLocaleTimeString()}`);
     await sniper.triggerBids();
     startRetryLoop(sniper, 3000);
   }, delay);
