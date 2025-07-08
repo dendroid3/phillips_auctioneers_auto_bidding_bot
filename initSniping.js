@@ -1,5 +1,25 @@
-// [... Keep all top imports and config the same ...]
+import puppeteer from "puppeteer";
+import axios from "axios";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
 
+const argv = yargs(hideBin(process.argv))
+  .option("email", { alias: "e", type: "string", demandOption: true })
+  .option("password", { alias: "p", type: "string", demandOption: true })
+  .option("phillips_account_id", {
+    alias: "pa",
+    type: "number",
+    demandOption: true,
+  })
+  .option("auction_session_id", {
+    alias: "a",
+    type: "number",
+    demandOption: true,
+  })
+  .option("trigger_time", { alias: "t", type: "string", demandOption: true })
+  .option("bid_stage_id", { alias: "b", type: "number", demandOption: true })
+  .help()
+  .alias("help", "h").argv;
 class AuctionSniper {
   constructor() {
     this.browser = null;
