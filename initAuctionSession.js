@@ -100,7 +100,7 @@ const sendResultToAPI = async (payload) => {
 
     await page.goto("about:blank");
     // Scrape vehicle URLS and send to the backend
-    await page.goto("http://phillips.adilirealestate.com/liveAuction.html", {
+    await page.goto("https://phillipsauctioneers.co.ke/live-auction/", {
       waitUntil: "domcontentloaded",
       timeout: 100000,
     });
