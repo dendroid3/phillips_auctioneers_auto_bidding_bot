@@ -114,7 +114,7 @@ main() {
     vehicles=$(xh -q POST ":/api/sniping/init" \
         auction_session_id=1 \
         phillips_account_id=2 \
-    --body | jq -r '.[].phillips_vehicle_id')
+    --body)
     
     # Loop over each vehicle ID
     for vehicle in $vehicles; do
