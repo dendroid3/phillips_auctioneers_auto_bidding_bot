@@ -113,7 +113,8 @@ main() {
     local vehicles
     vehicles=$(xh -v POST ":/api/sniping/init" \
         auction_session_id=1 \
-    phillips_account_id=2 )
+        phillips_account_id=2 \
+    --body)
     
     echo "$vehicles"
     for vehicle in $vehicles; do
