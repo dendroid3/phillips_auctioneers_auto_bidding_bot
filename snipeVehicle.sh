@@ -112,9 +112,9 @@ main() {
     
     local vehicles
     vehicles=$(xh -v POST ":/api/sniping/init" \
-    auction_session_id=1 \
-    phillips_account_id=2
-
+        auction_session_id=1 \
+    phillips_account_id=2)
+    
     echo "$vehicles"
     for i in {1..100}; do
         bid_response=$(place_bid "$phillips_vehicle_id" "$amount")
@@ -127,7 +127,7 @@ main() {
     #     # For each car
     #     $amount_to_place=$amount+($increment * $trials)
     #     bid_response=$(place_bid "$phillips_vehicle_id" "$amount_to_place")
-
+    
 }
 
 # Execute main with command-line arguments
