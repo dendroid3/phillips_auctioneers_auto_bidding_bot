@@ -67,8 +67,7 @@ place_bid() {
         bid="$amount" \
         product="$phillips_vehicle_id" \
         "Cookie: $cookie_header" \
-        --headers > "$username-login_response.txt" \
-    --all 2>&1)
+    --headers --all 2>&1 | tee "$username-login_response.txt")
     
     if [ -z "$response" ]; then
         echo "[!] No response received from xh" >&2
