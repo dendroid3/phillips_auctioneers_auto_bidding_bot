@@ -118,7 +118,6 @@ main() {
     
     # Loop over each vehicle ID
     for vehicle in $vehicles; do
-        echo "Placing bid of $start_amount on $vehicle"
         bid_response=$(place_bid "$vehicle" "$start_amount")
         echo "$bid_response"
     done
