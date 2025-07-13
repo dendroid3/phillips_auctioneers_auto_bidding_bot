@@ -67,7 +67,7 @@ place_bid() {
         bid="$amount" \
         product="$phillips_vehicle_id" \
         "Cookie: $cookie_header" \
-        --headers > "$username-login_response.txt"
+        --headers > "$username-login_response.txt" \
     --all 2>&1)
     
     if [ -z "$response" ]; then
