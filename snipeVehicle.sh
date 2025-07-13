@@ -115,6 +115,8 @@ main() {
         auction_session_id=1 \
         phillips_account_id=2 \
     --body)
+
+    echo $vehicles
     
     # Loop over each vehicle ID
     for vehicle in $vehicles; do
