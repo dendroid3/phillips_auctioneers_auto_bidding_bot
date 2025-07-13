@@ -74,10 +74,6 @@ place_bid() {
     fi
     
     grep -i "^Set-Cookie:" "$username-login_response.txt" > "$username-cookies.txt"
-    
-    echo "[✓] Cookies saved to $username-cookies.txt"
-    
-    echo "$response"
 }
 
 # ---- Main Script ----
