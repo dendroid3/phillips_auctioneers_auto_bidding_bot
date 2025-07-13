@@ -132,7 +132,7 @@ main() {
                 echo "$bid_response"
             done
             
-        else
+        # else
             # echo "⛔ $current_time is outside the target window ($start_time - $end_time). Exiting."
             # break
         fi
