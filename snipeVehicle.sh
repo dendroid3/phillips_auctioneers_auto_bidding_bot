@@ -10,7 +10,7 @@ BID_URL="$BASE_URL/wp-admin/admin-ajax.php"
 
 # Print usage help
 print_usage() {
-    echo "Usage: $0 <username> <password> <phillips_vehicle_id> <amount> <increment> <maximum_amount> <trigger_time>"
+    echo "Usage: $0 <username> <password> <bid_stage_id> <start_time> <end_time>"
     exit 1
 }
 
@@ -80,17 +80,15 @@ place_bid() {
 
 main() {
     # Check args
-    if [ "$#" -ne 7 ]; then
+    if [ "$#" -ne 5 ]; then
         print_usage
     fi
     
     local username="$1"
     local password="$2"
-    local phillips_vehicle_id="$3"
-    local amount="$4"
-    local increment="$5"
-    local maximum_amount="$6"
-    local trigger_time="$7"
+    local bid_stage_id="$3"
+    local start_time="$4"
+    local end_time="$5"
     
     # Step 1: Fetch login page HTML
     local html
@@ -110,34 +108,43 @@ main() {
     # Step 3: Login and save cookies
     perform_login "$username" "$password" "$nonce"
     
-    # Get the vehicle list (just the response body)
-    vehicles=$(xh POST ":/api/sniping/init" \
-        auction_session_id=1 \
-        phillips_account_id=2 \
-    --body | jq -r '.[].phillips_vehicle_id')
-    
-    # While time between start_time and end_time
-    
-    start_time="15:12:30"
-    end_time="15:14:00"
-    
+    # Get the response and extract the list as JSON objects (compact form)
+    vehicles=($(xh POST ":/api/sniping/init" \
+            auction_session_id=1 \
+            phillips_account_id=2 \
+    --body | jq -c '.[]'))
+
+    # Start the time check loop
     while true; do
         current_time=$(date +%H:%M:%S)
-        
+
         if [[ "$current_time" > "$start_time" && "$current_time" < "$end_time" ]]; then
             echo "⏱️ $current_time is between $start_time and $end_time"
-            
-            # Loop over each vehicle ID
-            for vehicle in $vehicles; do
-                bid_response=$(place_bid "$vehicle" "$start_amount")
-                echo "$bid_response"
+
+            for vehicle_json in "${vehicles[@]}"; do
+                phillips_vehicle_id=$(jq -r '.phillips_vehicle_id' <<< "$vehicle_json")
+                amount=$(jq -r '.current_bid' <<< "$vehicle_json")
+                vehicle_id=$(jq -r '.id' <<< "$vehicle_json")
+
+                # echo "🚗 Bidding on $phillips_vehicle_id with amount $amount"
+                bid_response=$(place_bid "$phillips_vehicle_id" "$amount")
+
+                # Record Bid in API
+                xh POST ":/api/bid/create" \
+                    amount=$amount \
+                    vehicle_id=$vehicle_id \
+                    phillips_account_email=$username \
+                    bid_stage_id=$bid_stage_id \
+                    status="Outbidded"
+
+                # echo "$bid_response"
             done
-            
-            elif [[ "$current_time" > "$start_time" && "$current_time" > "$end_time" ]]; then
+
+        elif [[ "$current_time" > "$start_time" && "$current_time" > "$end_time" ]]; then
             echo "⛔ $current_time is outside the target window ($start_time - $end_time). Exiting."
             break
         fi
-        
+
         # sleep 1
     done
     
