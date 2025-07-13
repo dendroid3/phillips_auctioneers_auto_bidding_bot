@@ -111,12 +111,10 @@ main() {
     perform_login "$username" "$password" "$nonce"
     
     # Get the vehicle list (just the response body)
-    vehicles=$(xh -q POST ":/api/sniping/init" \
+    vehicles=$(xh POST ":/api/sniping/init" \
         auction_session_id=1 \
         phillips_account_id=2 \
-    --body)
-
-    echo $vehicles
+    --body | jq -r '.[].phillips_vehicle_id')
     
     # Loop over each vehicle ID
     for vehicle in $vehicles; do
