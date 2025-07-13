@@ -118,8 +118,8 @@ main() {
     
     # While time between start_time and end_time
     
-    start_time="15:00:00"
-    end_time="15:03:00"
+    start_time="15:01:00"
+    end_time="15:04:00"
     
     while true; do
         current_time=$(date +%H:%M:%S)
@@ -134,7 +134,7 @@ main() {
             
         else
             echo "⛔ $current_time is outside the target window ($start_time - $end_time). Exiting."
-            break
+            # break
         fi
     done
     
