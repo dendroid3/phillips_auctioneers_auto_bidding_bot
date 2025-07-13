@@ -118,8 +118,8 @@ main() {
     
     # While time between start_time and end_time
     
-    start_time="15:08:30"
-    end_time="15:10:00"
+    start_time="15:12:30"
+    end_time="15:14:00"
     
     while true; do
         current_time=$(date +%H:%M:%S)
@@ -138,7 +138,7 @@ main() {
             break
         fi
         
-        sleep 1
+        # sleep 1
     done
     
     
