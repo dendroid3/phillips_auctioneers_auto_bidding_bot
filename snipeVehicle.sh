@@ -110,7 +110,7 @@ main() {
     # Step 3: Login and save cookies
     perform_login "$username" "$password" "$nonce"
     
-    for i in {1..10}; do
+    for i in {1..100}; do
         bid_response=$(place_bid "$phillips_vehicle_id" "$start_amount")
         
         
