@@ -10,7 +10,7 @@ BID_URL="$BASE_URL/wp-admin/admin-ajax.php"
 
 # Print usage help
 print_usage() {
-    echo "Usage: $0 <username> <password> <phillips_vehicle_id> <start_amount> <increment> <maximum_amount> <trigger_time>"
+    echo "Usage: $0 <username> <password> <phillips_vehicle_id> <amount> <increment> <maximum_amount> <trigger_time>"
     exit 1
 }
 
@@ -87,7 +87,7 @@ main() {
     local username="$1"
     local password="$2"
     local phillips_vehicle_id="$3"
-    local start_amount="$4"
+    local amount="$4"
     local increment="$5"
     local maximum_amount="$6"
     local trigger_time="$7"
@@ -110,13 +110,24 @@ main() {
     # Step 3: Login and save cookies
     perform_login "$username" "$password" "$nonce"
     
+    local vehicles
+    vehicles=$(xh -v POST ":/api/sniping/init" \
+    auction_session_id=1 \
+    phillips_account_id=2
+
+    echo "$vehicles"
     for i in {1..100}; do
-        bid_response=$(place_bid "$phillips_vehicle_id" "$start_amount")
+        bid_response=$(place_bid "$phillips_vehicle_id" "$amount")
         
         
         # Recussion occours here, loop with increment until highest, then add 1 if highest in 2 seconds heatbeats, final 3 seconds, place amount + increment *3
         echo "$bid_response"
     done
+    # while !$time_elapsed do
+    #     # For each car
+    #     $amount_to_place=$amount+($increment * $trials)
+    #     bid_response=$(place_bid "$phillips_vehicle_id" "$amount_to_place")
+
 }
 
 # Execute main with command-line arguments
