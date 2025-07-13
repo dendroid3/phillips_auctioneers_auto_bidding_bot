@@ -51,7 +51,7 @@ place_bid() {
     local amount="$2"
     
     echo "Placing bid of $amount on $phillips_vehicle_id"
-
+    
     local cookie_header
     cookie_header=$(awk -F': ' '/set-cookie:/ {
         split($2, parts, ";");
@@ -67,11 +67,16 @@ place_bid() {
         bid="$amount" \
         product="$phillips_vehicle_id" \
         "Cookie: $cookie_header" \
+        --headers > "$username-login_response.txt"
     --all 2>&1)
     
     if [ -z "$response" ]; then
         echo "[!] No response received from xh" >&2
     fi
+    
+    grep -i "^Set-Cookie:" "$username-login_response.txt" > "$username-cookies.txt"
+    
+    echo "[✓] Cookies saved to $username-cookies.txt"
     
     echo "$response"
 }
