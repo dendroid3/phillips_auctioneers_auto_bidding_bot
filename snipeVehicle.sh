@@ -118,8 +118,8 @@ main() {
     
     # While time between start_time and end_time
     
-    start_time="15:03:30"
-    end_time="15:05:00"
+    start_time="15:07:30"
+    end_time="15:09:00"
     
     while true; do
         current_time=$(date +%H:%M:%S)
@@ -132,9 +132,9 @@ main() {
                 echo "$bid_response"
             done
             
-        # else
-            # echo "⛔ $current_time is outside the target window ($start_time - $end_time). Exiting."
-            # break
+        else if [[ "$current_time" > "$start_time" && "$current_time" > "$end_time" ]]; then
+            echo "⛔ $current_time is outside the target window ($start_time - $end_time). Exiting."
+            break
         fi
     done
     
