@@ -116,10 +116,26 @@ main() {
         phillips_account_id=2 \
     --body | jq -r '.[].phillips_vehicle_id')
     
-    # Loop over each vehicle ID
-    for vehicle in $vehicles; do
-        bid_response=$(place_bid "$vehicle" "$start_amount")
-        echo "$bid_response"
+    # While time between start_time and end_time
+    
+    start_time="15:00:00"
+    end_time="15:03:00"
+    
+    while true; do
+        current_time=$(date +%H:%M:%S)
+        
+        if [[ "$current_time" > "$start_time" && "$current_time" < "$end_time" ]]; then
+            echo "⏱️ $current_time is between $start_time and $end_time"
+            # Loop over each vehicle ID
+            for vehicle in $vehicles; do
+                bid_response=$(place_bid "$vehicle" "$start_amount")
+                echo "$bid_response"
+            done
+            
+        else
+            echo "⛔ $current_time is outside the target window ($start_time - $end_time). Exiting."
+            break
+        fi
     done
     
     # while !$time_elapsed do
