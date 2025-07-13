@@ -111,9 +111,9 @@ main() {
     perform_login "$username" "$password" "$nonce"
     
     local vehicles
-    vehicles=$(xh -q POST ":/api/sniping/init" \
+    vehicles=$(xh -v POST ":/api/sniping/init" \
         auction_session_id=1 \
-    phillips_account_id=2 | jq -r '.[]')
+    phillips_account_id=2 )
     
     echo "$vehicles"
     for vehicle in $vehicles; do
