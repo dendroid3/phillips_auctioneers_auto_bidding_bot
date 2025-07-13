@@ -118,25 +118,29 @@ main() {
     
     # While time between start_time and end_time
     
-    start_time="15:07:30"
-    end_time="15:09:00"
+    start_time="15:08:30"
+    end_time="15:10:00"
     
     while true; do
         current_time=$(date +%H:%M:%S)
         
         if [[ "$current_time" > "$start_time" && "$current_time" < "$end_time" ]]; then
             echo "⏱️ $current_time is between $start_time and $end_time"
+            
             # Loop over each vehicle ID
             for vehicle in $vehicles; do
                 bid_response=$(place_bid "$vehicle" "$start_amount")
                 echo "$bid_response"
             done
             
-        else if [[ "$current_time" > "$start_time" && "$current_time" > "$end_time" ]]; then
+            elif [[ "$current_time" > "$start_time" && "$current_time" > "$end_time" ]]; then
             echo "⛔ $current_time is outside the target window ($start_time - $end_time). Exiting."
             break
         fi
+        
+        sleep 1
     done
+    
     
     # while !$time_elapsed do
     #     # For each car
