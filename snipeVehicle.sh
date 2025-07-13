@@ -116,7 +116,8 @@ main() {
     phillips_account_id=2)
     
     echo "$vehicles"
-    for i in {1..100}; do
+    for $vehicle in $vehicles; do
+        echo "Doing for $vehicle"
         bid_response=$(place_bid "$phillips_vehicle_id" "$amount")
         
         
