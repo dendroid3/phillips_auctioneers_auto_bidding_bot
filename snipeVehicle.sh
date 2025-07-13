@@ -110,24 +110,21 @@ main() {
     # Step 3: Login and save cookies
     perform_login "$username" "$password" "$nonce"
     
-    local vehicles
-    vehicles=$(xh -v POST ":/api/sniping/init" \
+    # Get the vehicles (assumed JSON array), extract values using jq
+    vehicles=$(xh -q POST ":/api/sniping/init" \
         auction_session_id=1 \
-    phillips_account_id=2)
+    phillips_account_id=2 | jq -r '.[]')
     
-    echo "$vehicles"
-    for $vehicle in $vehicles; do
-        echo "Doing for $vehicle"
-        bid_response=$(place_bid "$phillips_vehicle_id" "$amount")
+    # Loop through each vehicle
+    for vehicle in $vehicles; do
+        echo "Doing for vehicle ID: $vehicle"
         
+        bid_response=$(place_bid "$vehicle" "$amount")
         
-        # Recussion occours here, loop with increment until highest, then add 1 if highest in 2 seconds heatbeats, final 3 seconds, place amount + increment *3
+        # Future: Add increment logic here based on bid_response
+        
         echo "$bid_response"
     done
-    # while !$time_elapsed do
-    #     # For each car
-    #     $amount_to_place=$amount+($increment * $trials)
-    #     bid_response=$(place_bid "$phillips_vehicle_id" "$amount_to_place")
     
 }
 
