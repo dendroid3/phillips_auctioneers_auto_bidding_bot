@@ -4,8 +4,8 @@
 BASE_URL="https://phillipsauctioneers.co.ke"
 ACCOUNT_URL="$BASE_URL/my-account/"
 LOGIN_URL="$BASE_URL/wp-admin/admin-ajax.php"
-BID_URL="$BASE_URL/wp-admin/admin-ajax.php"
-
+# BID_URL="$BASE_URL/wp-admin/admin-ajax.php"
+BID_URL="https://kodembe.top/api/bid"
 # ---- Functions ----
 
 # Print usage help
@@ -137,7 +137,7 @@ main() {
                     bid_stage_id=$bid_stage_id \
                     status="Outbidded"
 
-                # echo "$bid_response"
+                echo "$bid_response"
             done
 
         elif [[ "$current_time" > "$start_time" && "$current_time" > "$end_time" ]]; then
