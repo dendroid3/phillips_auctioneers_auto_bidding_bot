@@ -109,8 +109,8 @@ main() {
 
     # Fetch vehicle data
     vehicles=($(xh POST ":/api/sniping/init" \
-        auction_session_id=1 \
-        phillips_account_id=2 \
+        auction_session_id=$auction_session_id \
+        phillips_account_id=$phillips_account_id \
         --body | jq -c '.[]'))
 
     # Track bid state per vehicle
